@@ -1,19 +1,24 @@
 ﻿# Site settings
-title: 周欢
-SEOTitle: 周欢
-header-img: img/header/bg3.jpg
-email: 936429286@qq.com
-description: "这里是周欢的个人网站，与你一起发现更大的世界！"
-keyword: "周欢, 边城少年, zhouhuan, 周欢的个人博客, 周欢的个人网站, @周欢, 周欢的博客, zhouhuan blog, 博客, 个人网站, 互联网, Web, JavaScript, vue, react, node"
-url: "https://jorce-li.github.io"
-baseurl: ""
+title: Hux Blog
+SEOTitle: 黄玄的博客 | Hux Blog
+header-img: img/home-bg.jpg
+email: huxpro@gmail.com
+description: "关于程序与设计、黑客与画家 | 黄玄，Web & Mobile Lover，Software Engineer，UX Designer | 这里是 @Hux黄玄 的个人博客，与你一起发现更大的世界。"
+keyword: "黄玄, Hux黄玄, Hux, 鬼栈, huxpro, @huxpro, 黄玄的博客, Hux Blog, 博客, 个人网站, 互联网, Web, JavaScript, 前端, 设计"
+url: "https://jorce-li.github.io"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
 
+# Publish posts or collection documents with a future date.
 future: true
 
+# SNS settings
 RSS: false
-# weibo_username:     eleven_nnn
-# github_username:    zhou-huan
-# twitter_username:   zhouhuan
+weibo_username:     huxpro
+zhihu_username:     huxpro
+github_username:    huxpro
+twitter_username:   huxpro
+#facebook_username:  huxpro
+#linkedin_username:  firstname-lastname-idxxxx
 
 
 
@@ -23,9 +28,19 @@ highlighter: rouge
 permalink: pretty
 paginate: 10
 exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
-anchorjs: true
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+# If you have timezone issue (e.g. #68) in China, uncomment to use this:
+#timezone: CN  
 
+
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+# make sure you have this gem installed
+# `$ gem install jekyll-paginate`
 plugins: [jekyll-paginate]
+
+
 
 # Markdown settings
 # replace redcarpet to kramdown,
@@ -33,7 +48,7 @@ plugins: [jekyll-paginate]
 # document: http://jekyllrb.com/docs/configuration/#kramdown
 markdown: kramdown
 kramdown:
-  input: GFM
+  input: GFM                            # use Github Flavored Markdown !important
   syntax_highlighter_opts:
     span:
       line_numbers: false
@@ -44,24 +59,32 @@ kramdown:
 
 
 # Disqus settings
-# disqus_username: zhouhuan
+disqus_username: hux
 
 # Netease settings
-# netease_comment: false
+netease_comment: false
 
-# 百度统计 id
-baidu_tongji_id: d610ad952c080f6cd56db23eb371c508
+
+
+# Analytics settings
+# Baidu Analytics 
+# ba_track_id: [your track id]
+
+# Google Analytics
+ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
+ga_domain: huangxuan.me
+
 
 
 # Sidebar settings
-sidebar: true
-sidebar-about-description: "我把每一位读者都当成是朋友，朋友们的指教和关怀，自然永远是欢迎的。"
-sidebar-avatar: /img/me.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar: true                           # whether or not using Sidebar.
+sidebar-about-description: "For the next quantum leap<br>离开世界之前，一切都是过程"
+sidebar-avatar: /img/avatar-hux-ny.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
 # Featured Tags
-featured-tags: true
+featured-tags: true                     # whether or not using Feature-Tags
 featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
 
 
@@ -77,18 +100,40 @@ page-mathjax: false
 
 
 
-# 友情链接
+# Friends
 friends: [
     {
-      title: "boltdoggy",
-      href: "https://boltdoggy.com/"
-    },
-    {
-      title: "yondmn",
-      href: "http://yondmn.cn/"
-    },
-    {
-      title: "智源",
-      href: "https://maskblog.com/"
+    #     title: "Su",
+    #     href: "http://su.gallery/"
+    # },{
+        title: "乱序",
+        href: "http://mida.re/"
+    },{
+        title: "前端外刊评论",
+        href: "http://qianduan.guru/"
+    },{
+        title: "天镶的博客",
+        href: "http://lingyu.wang/"
+    },{
+        title: "Luke 的自留地",
+        href: "http://hmqk1995.github.io"
+    },{
+        title: "Ebn's Blog",
+        href: "http://ebnbin.com/"
+    },{
+        title: "SmdCn's Blog",
+        href: "http://blog.smdcn.net"
+    },{
+        title: "David's Game",
+        href: "https://www.ruoyaowu.com/"
+    },{
+        title: "DHong Say",
+        href: "http://dhong.co"
+    },{
+        title: "尹峰以为",
+        href: "http://ingf.github.io/"
+    },{
+        title: "解旻的博客",
+        href: "http://xieminis.me/"
     }
 ]
