@@ -1,22 +1,19 @@
 ﻿# Site settings
-title: Jorce-Li
-SEOTitle: 李嘉杰 | Jorce-Li
-header-img: img/iu1.jpg
-email: 17802926729@163.com
-description: ""
-keyword: ""
-url: "https://jorce-li.github.io"              # your host, for absolute URL
-baseurl: ""         # for example, '/blog' if your blog hosted on 'host/blog'
+title: 周欢
+SEOTitle: 周欢
+header-img: img/header/bg3.jpg
+email: 936429286@qq.com
+description: "这里是周欢的个人网站，与你一起发现更大的世界！"
+keyword: "周欢, 边城少年, zhouhuan, 周欢的个人博客, 周欢的个人网站, @周欢, 周欢的博客, zhouhuan blog, 博客, 个人网站, 互联网, Web, JavaScript, vue, react, node"
+url: "https://jorce-li.github.io"
+baseurl: ""
 
+future: true
 
-
-# SNS settings
 RSS: false
-weibo_username:     huxpro
-zhihu_username:     huxpro
-github_username:    huxpro
-#twitter_username:  huxpro
-facebook_username:  huxpro
+# weibo_username:     eleven_nnn
+# github_username:    zhou-huan
+# twitter_username:   zhouhuan
 
 
 
@@ -25,16 +22,10 @@ facebook_username:  huxpro
 highlighter: rouge
 permalink: pretty
 paginate: 10
-exclude: ["less","node_modules","Gruntfile.js","package.json","README.md"]
-anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+anchorjs: true
 
-
-
-# Gems
-# from PR#40, to support local preview for Jekyll 3.0
-gems: [jekyll-paginate]
-
-
+plugins: [jekyll-paginate]
 
 # Markdown settings
 # replace redcarpet to kramdown,
@@ -42,59 +33,62 @@ gems: [jekyll-paginate]
 # document: http://jekyllrb.com/docs/configuration/#kramdown
 markdown: kramdown
 kramdown:
-  input: GFM                            # use Github Flavored Markdown !important
+  input: GFM
+  syntax_highlighter_opts:
+    span:
+      line_numbers: false
+    block:
+      line_numbers: true
+      start_line: 1
 
 
 
 # Disqus settings
-#disqus_username: _your_disqus_short_name_
+# disqus_username: zhouhuan
 
-# Duoshuo settings
-duoshuo_username: huxblog
-# Share component is depend on Comment so we can NOT use share only.
-duoshuo_share: true                     # set to false if you want to use Comment without Sharing
+# Netease settings
+# netease_comment: false
 
-
-
-
-# Analytics settings
-# Baidu Analytics
-ba_track_id: 4cc1f2d8f3067386cc5cdb626a202900
-# Google Analytics
-ga_track_id: 'UA-49627206-1'            # Format: UA-xxxxxx-xx
-ga_domain: huangxuan.me
-
+# 百度统计 id
+baidu_tongji_id: d610ad952c080f6cd56db23eb371c508
 
 
 # Sidebar settings
-sidebar: true                           # whether or not using Sidebar.
-sidebar-about-description: "多出去走走，多接触新的东西，多想什么是自己想要的"
-sidebar-avatar: /img/iu1.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar: true
+sidebar-about-description: "我把每一位读者都当成是朋友，朋友们的指教和关怀，自然永远是欢迎的。"
+sidebar-avatar: /img/me.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
 # Featured Tags
-featured-tags: true                     # whether or not using Feature-Tags
+featured-tags: true
 featured-condition-size: 1              # A tag will be featured if the size of it is more than this condition value
 
 
 
-# Friends
+# Progressive Web Apps
+chrome-tab-theme-color: "#000000"
+service-worker: true
+
+
+
+# MathJax rendering for layout:page (e.g. post preview)
+page-mathjax: false
+
+
+
+# 友情链接
 friends: [
     {
-        title: "Jorce Blog",
-        href: "http://huangxuan.me"
-    },{
-        title: "Foo",
-        href: "#"
-    },{
-        title: "Bar",
-        href: "#"
-    },{
-        title: "Example Friends",
-        href: "#"
-    },{
-        title: "It helps SEO",
-        href: "#"
+      title: "boltdoggy",
+      href: "https://boltdoggy.com/"
+    },
+    {
+      title: "yondmn",
+      href: "http://yondmn.cn/"
+    },
+    {
+      title: "智源",
+      href: "https://maskblog.com/"
     }
 ]
