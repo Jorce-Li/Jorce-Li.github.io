@@ -1,0 +1,37 @@
+---
+layout:     keynote
+title:      "Welcome to Jorce Blog"
+subtitle:   " \"Look at the world\""
+date:       2018-12-2 12:00:00
+author:     "Jorce"
+header-img: "img/post-bg-2015.jpg"
+tags:
+    - 生活
+---
+
+> “Yeah It's on. ”
+
+
+## 前言
+
+Jorce 的 Blog 就这么开通了。
+
+[跳过废话，直接看技术实现 ](#build)
+
+
+
+第一篇博客
+
+
+<p id = "build"></p>
+---
+
+## 正文
+
+第一篇测试
+
+## 后记
+
+测试结束
+
+—— Jorce 记于 2018.12
