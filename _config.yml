@@ -13,10 +13,10 @@ future: true
 
 # SNS settings
 RSS: false
-weibo_username:     jorce
-zhihu_username:     jorce
-github_username:    jorce
-twitter_username:   jorce
+weibo_username:     Jorce丶
+# zhihu_username:     jorce
+github_username:    jorce-li
+# twitter_username:   jorce
 #facebook_username:  jorce
 #linkedin_username:  firstname-lastname-idxxxx
 
