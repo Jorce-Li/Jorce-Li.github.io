@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "使用colum进行等宽瀑布流布局"
+title: "使用column进行等宽瀑布流布局"
 subtitle: '瀑布流'
 author: "Jorce"
 header-style: text
