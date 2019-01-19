@@ -91,3 +91,74 @@ let proxy = new Proxy(obj, handler)
 proxy.name = 'Zoe' // set name Zoe
 proxy.age = 18 // set age 18
 ```
+#### 嵌套支持
+本质上，Proxy 也是不支持嵌套的，这点和 Object.defineProperty() 是一样的。因此也需要通过逐层遍历来解决。Proxy 的写法是在 get 里面递归调用 Proxy 并返回，代码如下：
+```js
+let obj = {
+  info: {
+    name: 'eason',
+    blogs: ['webpack', 'babel', 'cache']
+  }
+}
+let handler = {
+  get (target, key, receiver) {
+    console.log('get', key)
+    // 递归创建并返回
+    if (typeof target[key] === 'object' && target[key] !== null) {
+      return new Proxy(target[key], handler)
+    }
+    return Reflect.get(target, key, receiver)
+  },
+  set (target, key, value, receiver) {
+    console.log('set', key, value)
+    return Reflect.set(target, key, value, receiver)
+  }
+}
+let proxy = new Proxy(obj, handler)
+// 以下两句都能够进入 set
+proxy.info.name = 'Zoe'
+proxy.info.blogs.push('proxy')
+```
+# 面试题
+看一下经常遇到的面试题
+
+`什么样的 a 可以满足 (a === 1 && a === 2 && a === 3) === true 呢？(注意是 3 个 =，也就是严格相等)`
+
+原来的方法
+```js
+let current = 0
+Object.defineProperty(window, 'a', {
+  get () {
+    current++
+    return current
+  }
+})
+console.log(a === 1 && a === 2 && a === 3) // true
+```
+使用Proxy
+```js
+let foo = {
+  foo () {
+    console.log('foo')
+  }
+}
+let bar = {
+  bar () {
+    console.log('bar')
+  }
+}
+// 正常状态下，对象只能继承一个对象，要么有 foo()，要么有 bar()
+let sonOfFoo = Object.create(foo);
+sonOfFoo.foo();     // foo
+let sonOfBar = Object.create(bar);
+sonOfBar.bar();     // bar
+// 黑科技开始
+let sonOfFooBar = new Proxy({}, {
+  get (target, key) {
+    return target[key] || foo[key] || bar[key];
+  }
+})
+// 我们创造了一个对象同时继承了两个对象，foo() 和 bar() 同时拥有
+sonOfFooBar.foo();   // foo 有foo方法，继承自对象foo
+sonOfFooBar.bar();   // bar 也有bar方法，继承自对象bar
+```
