@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Vue等代码风格统一规范"
+title: "Vue代码风格统一规范"
 subtitle: 'cn.vue.js等'
 author: "Jorce"
 header-style: text
@@ -66,22 +66,25 @@ css和js起名为了避免与引入引出的命名产生冲突,最好有特殊�
 
 ### 组件起名规范
 
-1.始终是单词大写开头CommonCase
-2.使用连接符common-case
-3.创建通用不包含状态管理的组件时(button table icon等),最好在规定前缀VButton
-4.每个页面只使用一次的组件名称:TheCase,加上the前缀表示其一次性
-5.父子相关联的特殊组件最好不要用文件夹嵌套,而是用父组件名称对子组件添加前缀的命名方式
-6.针对该组件作用,将形容词放在前缀位置:SearchButton
-7.引入的组件使用时推荐使用连接符<my-component></my-component>写法
-8.组件名没必要为了缩短单词而使用缩写:stu=>student
-9.在声明 prop 的时候，其命名应该始终使用 camelCase，而在模板和 JSX 中应该始终使用 kebab-case。
+1. 始终是单词大写开头CommonCase
+2. 使用连接符common-case
+3. 创建通用不包含状态管理的组件时(button table icon等),最好在规定前缀VButton
+4. 每个页面只使用一次的组件名称:TheCase,加上the前缀表示其一次性
+5. 父子相关联的特殊组件最好不要用文件夹嵌套,而是用父组件名称对子组件添加前缀的命名方式
+6. 针对该组件作用,将形容词放在前缀位置:SearchButton
+7. 引入的组件使用时推荐使用连接符<my-component></my-component>写法
+8. 组件名没必要为了缩短单词而使用缩写:stu=>student
+9. 在声明 prop 的时候，其命名应该始终使用 camelCase，而在模板和 JSX 中应该始终使用 kebab-case。
+
 ```js
 props: {
   greetingText: String
 }
 <WelcomeMessage greeting-text="hi"/>
 ```
-10.组件属性最好分行写,增加易读性
+
+10. 组件属性最好分行写,增加易读性
+
 ```js
   <MyComponent
   foo="a"
@@ -89,6 +92,7 @@ props: {
   baz="c"
   />
 ```
+
 ### 表达式中的计算
 
 1.尽量避免在v-model中进行大量计算,可以对该属性进行watch
