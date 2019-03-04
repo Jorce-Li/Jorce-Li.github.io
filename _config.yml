@@ -79,7 +79,7 @@ ga_domain: jorce.top
 # Sidebar settings
 sidebar: true                           # whether or not using Sidebar.
 sidebar-about-description: "If you don't try to look out, you can't even count a frog in the well.<br>不尝试向外看,连井底之蛙都算不上 "
-sidebar-avatar: /img/iu1.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
+sidebar-avatar: /img/avatar.jpg      # use absolute URL, seeing it's used in both `/` and `/about/`
 
 
 
