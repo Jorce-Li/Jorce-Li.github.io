@@ -72,10 +72,26 @@ export const loadCss = (src, id) => {
 ```js 
     //对于footer header等下拉的组件 直接进行包裹
     //对于图片也是一样 直接包裹img标签即可，这要求网站预先要使用相同的img组件 最为快捷
+    //offset 指向下滚动的加载偏移量
     import LazyLoad from 'react-lazyload';
     <LazyLoad height={665} offset={200}>
       <Footer />
     </LazyLoad>
 ```
 
-## 
+## webpack 相关打包插件
+
+### MiniCssExtractPlugin
+### CopyWebpackPlugin
+### DefinePlugin
+### IgnorePlugin
+### MomentTimezoneDataPlugin
+### CleanWebpackPlugin
+### SourceMapDevToolPlugin
+### OptimizeCssAssetsPlugin
+### CompressionPlugin
+ssr
+### NodemonPlugin
+
+
+### optimization
