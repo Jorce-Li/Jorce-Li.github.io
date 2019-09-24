@@ -110,6 +110,7 @@ export const loadCss = (src, id) => {
       chunkFilename: 'css/style.[id].[chunkhash].css',
     }),
 ```
+
 ### CopyWebpackPlugin
     此插件不是用于优化，而是因为是SSR项目，便于更换IP等设置，所以将打包文件复制一份打包方便操作。
 ```js
@@ -125,6 +126,7 @@ export const loadCss = (src, id) => {
       { from: `${PATH_SRC}/index.hbs`, to: `${PATH_DIST}` }
     ]),
 ```
+
 ### DefinePlugin
     此插件不是用于优化，而是重新定义环境变量，这样就可以忽略构建时所定义的内容
 ```js
@@ -135,12 +137,14 @@ export const loadCss = (src, id) => {
       },
     }),
 ```
+
 ### IgnorePlugin
     这个插件的作用是打包时忽略第三包的指定目录，即按需打包～
 ```js
     // 例如moment包很大，我们只用了计算时间的问题，并不需要计算时区等，所以要减小这个包的大小。
     new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
 ```
+
 ### CleanWebpackPlugin
     这个插件的作用是清除打包时生成的bundle文件，重新打包的过程中不会清除上一次打包的bundle文件
 ```js
@@ -148,17 +152,20 @@ export const loadCss = (src, id) => {
     // 新版本不需要传参数
     new CleanWebpackPlugin([PATH_PUBLIC], { exclude: ['.gitignore'] }),
 ```
+
 ### SourceMapDevToolPlugin
     用于打包后报错
 ```js
     new webpack.SourceMapDevToolPlugin(),
 ```
+
 ### OptimizeCssAssetsPlugin
     用于压缩css
 ```js
     const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
     new OptimizeCssAssetsPlugin(),
 ```
+
 ### CompressionPlugin
     用于压缩成gzip或其他格式上线
 ```js
