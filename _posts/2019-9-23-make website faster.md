@@ -82,16 +82,119 @@ export const loadCss = (src, id) => {
 ## webpack 相关打包插件
 
 ### MiniCssExtractPlugin
+    在webpack4之前使用过的包是extract-text-webpack-plugin,作用是将css样式提取到单独的文件当中来，即使用import进行引入，支持SourceMaps按需加载。
+```js
+    const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+    // 在loader中使用， 此处注意，此插件默认不支持hmr,所以需要手动开启
+    {
+      test: /\.scss$/,
+      use: [
+        // extract-text-webpack-plugin has bug in webpack4
+        {
+          loader: MiniCssExtractPlugin.loader,
+          // 默认情况下，使用的是webpackOptions.output中publicPath
+          publicPath: './',
+          options: {
+            hmr: process.env.NODE_ENV === 'development'
+          }
+        },
+        // MiniCssExtractPlugin.loader,
+        'css-loader?sourceMap',
+        'postcss-loader?sourceMap',
+        'sass-loader?sourceMap',
+      ],
+    },
+    // 在plugins中 初始化
+    new MiniCssExtractPlugin({
+      filename: 'css/style.[chunkhash].css',
+      chunkFilename: 'css/style.[id].[chunkhash].css',
+    }),
+```
 ### CopyWebpackPlugin
+    此插件不是用于优化，而是因为是SSR项目，便于更换IP等设置，所以将打包文件复制一份打包方便操作。
+```js
+    const CopyWebpackPlugin = require('copy-webpack-plugin');
+    // flatten的意思是忽略文件层级,全部展平
+    new CopyWebpackPlugin([
+      { from: `${PATH_SRC}/vendor/*`, to: `${PATH_PUBLIC}/vendor/`, flatten: true },
+      { from: 'src/assets', to: `${PATH_PUBLIC}/assets/` },
+      {
+        from: `${PATH_SRC}/*.txt`,
+        to: `${PATH_PUBLIC}/[name].[ext]`,
+      },
+      { from: `${PATH_SRC}/index.hbs`, to: `${PATH_DIST}` }
+    ]),
+```
 ### DefinePlugin
+    此插件不是用于优化，而是重新定义环境变量，这样就可以忽略构建时所定义的内容
+```js
+    const CopyWebpackPlugin = require('copy-webpack-plugin');
+    new webpack.DefinePlugin({
+      'process.env': {
+        IS_BROWSER: JSON.stringify(true),
+      },
+    }),
+```
 ### IgnorePlugin
-### MomentTimezoneDataPlugin
+    这个插件的作用是打包时忽略第三包的指定目录，即按需打包～
+```js
+    // 例如moment包很大，我们只用了计算时间的问题，并不需要计算时区等，所以要减小这个包的大小。
+    new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/),
+```
 ### CleanWebpackPlugin
+    这个插件的作用是清除打包时生成的bundle文件，重新打包的过程中不会清除上一次打包的bundle文件
+```js
+    const CleanWebpackPlugin = require('clean-webpack-plugin');
+    // 新版本不需要传参数
+    new CleanWebpackPlugin([PATH_PUBLIC], { exclude: ['.gitignore'] }),
+```
 ### SourceMapDevToolPlugin
+    用于打包后报错
+```js
+    new webpack.SourceMapDevToolPlugin(),
+```
 ### OptimizeCssAssetsPlugin
+    用于压缩css
+```js
+    const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+    new OptimizeCssAssetsPlugin(),
+```
 ### CompressionPlugin
-ssr
-### NodemonPlugin
-
+    用于压缩成gzip或其他格式上线
+```js
+    const CompressionPlugin = require('compression-webpack-plugin');
+    new CompressionPlugin({
+      filename: '[path].gz[query]',
+      test: /\.(js|css|html|svg)$/,
+      threshold: 1024, // 只处理大于此大小的文件
+      minRatio: 0.8 // 最小压缩比例
+    }),
+    new CompressionPlugin({
+      filename: '[path].br[query]',
+      test: /\.(js|css|html|svg)$/,
+      threshold: 1024,
+      minRatio: 0.8,
+      algorithm: 'brotliCompress', //压缩格式
+      compressionOptions: { level: 11 }, // 压缩等级
+    }),
+```
+<!-- ### NodemonPlugin -->
 
 ### optimization
+    用于优化打包策略
+```js
+    optimization: {
+      noEmitOnErrors: true, // 编译错误时不生成资源
+      runtimeChunk: 'single', // manifest
+      splitChunks: {
+        // 缓存打包分离
+        cacheGroups: {
+          vendor: {
+            test: /[\\/]node_modules[\\/]/,
+            name: 'vendors',
+            chunks: 'initial',
+          }
+        }
+      }
+    },
+```
