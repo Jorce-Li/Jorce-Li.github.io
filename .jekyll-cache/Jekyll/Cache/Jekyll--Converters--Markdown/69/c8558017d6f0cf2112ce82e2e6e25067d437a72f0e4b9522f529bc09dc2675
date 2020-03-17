@@ -1,0 +1,267 @@
+I"1(<h4 id="git-clone">git clone</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">git clone url</code> 拷贝一个 git 仓库到本地</li>
+</ul>
+
+<h4 id="git-pull">git pull</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">git pull</code> 获取远程分支并合并到当前分支</li>
+</ul>
+
+<h4 id="git-push">git push</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git push</code> 将本地仓库代码推到远程仓库</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git push remoteName branchName</code> 将本地仓库代码推到 remoteName 远程仓库中的 branchName 分支</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git push --set-upstream remoteName branchName</code> 在 remoteName 远程仓库创建 branchName 分支，并将当前仓库当前分支的代码推到新建的分支中</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git push remoteName -d branchName</code> 删除 remoteName 远程仓库中的 branchName 分支</p>
+  </li>
+</ul>
+
+<h4 id="git-branch">git branch</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git branch</code> 显示本地分支</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git branch -a</code> 显示所有分支，包括本地分支和远程分支</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git branch -d branchName</code> 删除 branchName 分支</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git branch -D branchName</code> 强制删除 branchName 分支</p>
+  </li>
+</ul>
+
+<h4 id="git-remote">git remote</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git remote</code> 查看已经配置的远程仓库服务器</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git remote -v</code> 显示需要读写远程仓库使用的 Git 保存的简写与其对应的 URL</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git remote add &lt;shortname&gt; &lt;url&gt;</code> 添加一个新的远程 Git 仓库，同时指定一个别名</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git remote show remoteName</code> 查看 remoteName 远程仓库的详细信息</p>
+  </li>
+</ul>
+
+<h4 id="git-checkout">git checkout</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git checkout branchName</code> 切换到 branchName 分支</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git checkout -b branchName</code> 从当前分支创建新分支 branchName，并切换到该分支</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git checkout -b [branch] [remotename]/[branch]</code> 创建本地分支跟踪远程分支</p>
+  </li>
+</ul>
+
+<h4 id="git-add">git add</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git add filePath</code> 添加指定文件到缓存区</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git add .</code> 将所有改动添加到缓存区</p>
+  </li>
+</ul>
+
+<h4 id="git-commit">git commit</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git commit -m"commit message"</code> 将暂存区代码添加本地到仓库中</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git commit -am"commit message"</code> git add 和 git commit 的合成命令，将工作区<strong>所有文件的更改</strong>添加到缓存区同时提交到仓库</p>
+  </li>
+</ul>
+
+<h4 id="git-merge">git merge</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">git merge branchName</code> 合并 branchName 分支到当前分支</li>
+</ul>
+
+<h4 id="git-status">git status</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git status</code> 查看上次提交之后是否有修改</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git status -s</code> 查看简短的输出结果</p>
+  </li>
+</ul>
+
+<h4 id="git-log">git log</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git log</code> 显示提交日志</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git log -p</code> 显示提交日志以及每次提交所对应的代码变动</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git log -n</code> 显示 n 个 commit 的日志</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git log --pretty=format:'%h %s' --graph</code> 图示提交日志</p>
+  </li>
+</ul>
+
+<h4 id="git-reset">git reset</h4>
+
+<ul>
+  <li>
+    <p>与 <code class="highlighter-rouge">git add</code> 相对的，<code class="highlighter-rouge">git reset</code> 可以将添加到暂存区的文件还原到工作区：</p>
+
+    <ul>
+      <li>
+        <p><code class="highlighter-rouge">git reset filePath</code> 还原指定文件</p>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">git reset .</code> 还原所有文件</p>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git reset</code> 还有回退版本的功能：</p>
+
+    <ul>
+      <li>
+        <p><code class="highlighter-rouge">git reset --hard HEAD^</code> 将当前版本回退到上一个版本</p>
+
+        <p><code class="highlighter-rouge">HEAD</code> 代表当前版本，<code class="highlighter-rouge">HEAD^</code> 代表上一个版本，托字符 <code class="highlighter-rouge">^</code> 可以用来表示回溯版本的个数，写几个就回溯几个版本。但如果我们要回溯80个版本，git 也不会让我们就真的傻乎乎的写80个 <code class="highlighter-rouge">^</code>，这时可以这么写 <code class="highlighter-rouge">HEAD~80</code>。</p>
+      </li>
+      <li>
+        <p><code class="highlighter-rouge">git reset --hard commitId</code> 还可以回退到指定版本：</p>
+
+        <p>其中 commitId 可以不用写全，写前几位就好，git 会帮我们自动去找。但也不能只写两三位，如果匹配到多个 commitId 的话 git 就不知道我们要回退到哪一个了。</p>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="git-rebase">git rebase</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git rebase branchName</code> 将当前分支变基到 branchName 分支</p>
+
+    <p>更多内容可查看 <a href="https://www.git-tower.com/learn/git/ebook/cn/command-line/advanced-topics/rebase#start">Rebase 代替合并</a></p>
+  </li>
+</ul>
+
+<h4 id="git-fetch">git fetch</h4>
+
+<ul>
+  <li><code class="highlighter-rouge">git fetch</code> 获取所有远程分支（不自动合并）</li>
+</ul>
+
+<h4 id="git-tag">git tag</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git tag</code> 查看所有的标签</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git tag newName</code> 创建一个轻量级的标签</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git tag -a newName -m"annotate"</code> 创建一个带注释的标签</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git tag -d tagName</code> 删除某个标签</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git checkout tagName</code> 切换到某个标签</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git tag -l</code> 查看所有标签</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git show tagName</code> 查看该标签的信息</p>
+
+    <p><strong>tag 指向的是一次 commit，show tagName 命令展示出来的 diff 也是该次 commit 的</strong></p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git push --tags</code> 将本地的标签推到远程</p>
+
+    <p>默认情况下，<code class="highlighter-rouge">git push</code>不会将标签上传到远程服务器，为了共享这些标签，须在<code class="highlighter-rouge">git push</code>后加 <code class="highlighter-rouge">--tags</code> 选项</p>
+  </li>
+</ul>
+
+<h4 id="git-stash">git stash</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git stash</code> 将工作区和暂存区的代码临时储存起来，每 stash 一次就在储存栈的顶部新增一个储存项</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git stash list</code> 查看当前储存栈</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git stash pop</code> 恢复储存栈顶部的储存项，同时将其从储存栈中移除</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git stash show / git stash show stashName</code> 查看顶部或指定储存项的简要 diff 信息，增加参数 <code class="highlighter-rouge">-p</code> 可以查看详细 diff 信息</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git stash drop / git stash drop stashName</code> 删除储存栈顶部或指定的储存项，可以使用 git stash list 查看 stashName</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git stash clear</code> 清除储存栈中所有储存项</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git stash apply</code> / <code class="highlighter-rouge">git stash apply stashName</code> 恢复顶部或目标储存项，但不从储存栈中删除它</p>
+  </li>
+</ul>
+
+<h4 id="git-config">git config</h4>
+
+<ul>
+  <li>
+    <p><code class="highlighter-rouge">git config user.name</code> 查看本地用户名</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git config user.email</code> 查看本地用户邮箱地址</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git config --global user.name "username"</code> 修改本地用户名</p>
+  </li>
+  <li>
+    <p><code class="highlighter-rouge">git config --global user.email "email-address"</code> 修改本地用户邮箱地址</p>
+  </li>
+</ul>
+
+<p>如果发现将某些文件加入 gitignore 的忽略规则之后未生效，原因可能是：.gitignore 只能忽略那些原来没有被 track 的文件，如果某些文件已经被纳入了版本管理中，则修改 .gitignore 文件是无效的，解决方法就是把本地缓存删除（改变成未 track 状态），然后再提交：</p>
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>git <span class="nb">rm</span> <span class="nt">-r</span> <span class="nt">--cached</span> <span class="nb">.</span>
+git add <span class="nb">.</span>
+git commit <span class="nt">-m</span> <span class="s2">"update .gitignore"</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

@@ -1,0 +1,20 @@
+I"�<p>Update: 测试微信预览或下载</p>
+
+<hr />
+<h1 id="ios">IOS</h1>
+
+<p>1.可以预览：txt类型(包括js ini py ) doc xls ppt xlsx mp4 mp3 png (所有图片格式)</p>
+
+<p>2.可以下载： </p>
+
+<p>3.预览失败：rar zip exe docx(空文件) pptx(空文件) html(编码格式问题)</p>
+
+<h1 id="安卓">安卓</h1>
+
+<p>1.可以预览：txt类型(包括js ini py ) mp4 mp3 png (所有图片格式)</p>
+
+<p>2.可以下载：zip xlxs rar exe </p>
+
+<p>3.预览失败：html(编码格式问题)</p>
+
+:ET

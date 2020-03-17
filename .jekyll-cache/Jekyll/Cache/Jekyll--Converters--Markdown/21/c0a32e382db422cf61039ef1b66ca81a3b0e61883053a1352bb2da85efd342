@@ -1,0 +1,567 @@
+I"@�<p>Update: 聊天室</p>
+
+<hr />
+
+<p>最近在用socket.io做公司的直播聊天室,原本是很简单的多对多的公共聊天室,现在复杂成了各种charactor,一对一、一对多、多对多、一对All等情况,其中还包含了发送图片,截图,发送语音等功能。后续应该还会出web版的视频(目前看到的解决办法是webRtc)</p>
+
+<p>今天主要记录一下图片和语音的部分</p>
+
+<h1 id="发送图片上传和截图">发送图片（上传和截图）</h1>
+
+<h3 id="上传图片">上传图片</h3>
+<p>上传的话不用多做解释不管是vue还是react都可以用refs去获取input的file值</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>    <span class="kd">let</span> <span class="nx">file</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">refs</span><span class="p">.</span><span class="nx">sendImg</span><span class="p">.</span><span class="nx">files</span><span class="p">[</span><span class="mi">0</span><span class="p">];</span>  <span class="c1">//得到该图片</span>
+    <span class="kd">let</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileReader</span><span class="p">();</span>      <span class="c1">//创建一个FileReader对象，进行下一步的操作</span>
+    <span class="nx">reader</span><span class="p">.</span><span class="nx">readAsDataURL</span><span class="p">(</span><span class="nx">file</span><span class="p">);</span>
+    <span class="nx">reader</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span><span class="p">()</span><span class="o">=&gt;</span><span class="p">{</span>
+    <span class="c1">// console.log(reader.result)           //读取完毕会自动触发，读取结果保存在result中</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>得到一张图片之后将base64发送到服务端再分发</p>
+
+<p>###截图</p>
+
+<p>截图这一块在github上找了些canvas的库兼容性和实用性都不高,所以采用了最简单的方法:
+获取第三方应用截图的路径。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">items</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">clipboardData</span>  <span class="o">||</span> <span class="nx">event</span><span class="p">.</span><span class="nx">originalEvent</span><span class="p">.</span><span class="nx">clipboardData</span><span class="p">).</span><span class="nx">items</span><span class="p">;</span>
+    <span class="kd">const</span> <span class="nx">data</span> <span class="o">=</span> <span class="nx">event</span><span class="p">.</span><span class="nx">clipboardData</span>
+    <span class="c1">// console.log(data.getData('files'))</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">const</span> <span class="nx">index</span> <span class="k">in</span> <span class="nx">items</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">item</span> <span class="o">=</span> <span class="nx">items</span><span class="p">[</span><span class="nx">index</span><span class="p">];</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">item</span><span class="p">.</span><span class="nx">kind</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">file</span><span class="dl">'</span><span class="p">)</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">blob</span> <span class="o">=</span> <span class="nx">item</span><span class="p">.</span><span class="nx">getAsFile</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">reader</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FileReader</span><span class="p">();</span>
+        <span class="nx">reader</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="p">(</span><span class="nx">event</span><span class="p">)</span><span class="o">=&gt;</span><span class="p">{</span>
+          <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">target</span><span class="p">.</span><span class="nx">result</span><span class="p">)</span>
+        <span class="p">};</span> <span class="c1">// data url!</span>
+        <span class="nx">reader</span><span class="p">.</span><span class="nx">readAsDataURL</span><span class="p">(</span><span class="nx">blob</span><span class="p">);</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>获取第三方应用截图的剪贴板数据,如果是文件类型的话就是图片</p>
+
+<h1 id="语音">语音</h1>
+
+<p>语音这块的要调用浏览器media去获取声音stream。</p>
+
+<p>下面的代码可以直接用。要注意每次录音完要将buffer和size清空</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117
+118
+119
+120
+121
+122
+123
+124
+125
+126
+127
+128
+129
+130
+131
+132
+133
+134
+135
+136
+137
+138
+139
+140
+141
+142
+143
+144
+145
+146
+147
+148
+149
+150
+151
+152
+153
+154
+155
+156
+157
+158
+159
+160
+161
+162
+163
+164
+165
+166
+167
+168
+169
+170
+171
+172
+173
+174
+175
+176
+177
+178
+179
+180
+181
+182
+183
+184
+185
+186
+187
+188
+189
+190
+191
+192
+193
+194
+195
+196
+197
+198
+199
+200
+201
+202
+203
+204
+205
+206
+207
+208
+209
+210
+211
+212
+213
+214
+215
+216
+217
+218
+219
+220
+221
+222
+223
+224
+225
+226
+227
+228
+229
+230
+231
+232
+233
+234
+235
+236
+237
+238
+</pre></td><td class="rouge-code"><pre><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nb">window</span><span class="p">)</span> <span class="p">{</span>
+  <span class="c1">//兼容</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">webkitURL</span><span class="p">;</span>
+  <span class="nb">navigator</span><span class="p">.</span><span class="nx">getUserMedia</span> <span class="o">=</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">getUserMedia</span> <span class="o">||</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">webkitGetUserMedia</span> <span class="o">||</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">mozGetUserMedia</span> <span class="o">||</span> <span class="nb">navigator</span><span class="p">.</span><span class="nx">msGetUserMedia</span><span class="p">;</span>
+
+  <span class="kd">var</span> <span class="nx">HZRecorder</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">stream</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">config</span> <span class="o">=</span> <span class="nx">config</span> <span class="o">||</span> <span class="p">{};</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">sampleBits</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">sampleBits</span> <span class="o">||</span> <span class="mi">16</span><span class="p">;</span> <span class="c1">//采样数位 8, 16</span>
+    <span class="nx">config</span><span class="p">.</span><span class="nx">sampleRate</span> <span class="o">=</span> <span class="nx">config</span><span class="p">.</span><span class="nx">sampleRate</span> <span class="o">||</span> <span class="p">(</span><span class="mi">16000</span><span class="p">);</span> <span class="c1">//采样率(1/6 44100)</span>
+
+    <span class="kd">var</span> <span class="nx">context</span> <span class="o">=</span> <span class="k">new</span><span class="p">(</span><span class="nb">window</span><span class="p">.</span><span class="nx">webkitAudioContext</span> <span class="o">||</span> <span class="nb">window</span><span class="p">.</span><span class="nx">AudioContext</span><span class="p">)();</span>
+    <span class="kd">var</span> <span class="nx">audioInput</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">createMediaStreamSource</span><span class="p">(</span><span class="nx">stream</span><span class="p">);</span>
+    <span class="kd">var</span> <span class="nx">createScript</span> <span class="o">=</span> <span class="nx">context</span><span class="p">.</span><span class="nx">createScriptProcessor</span> <span class="o">||</span> <span class="nx">context</span><span class="p">.</span><span class="nx">createJavaScriptNode</span><span class="p">;</span>
+    <span class="kd">var</span> <span class="nx">recorder</span> <span class="o">=</span> <span class="nx">createScript</span><span class="p">.</span><span class="nx">apply</span><span class="p">(</span><span class="nx">context</span><span class="p">,</span> <span class="p">[</span><span class="mi">4096</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]);</span>
+
+    <span class="kd">var</span> <span class="nx">audioData</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">size</span><span class="p">:</span> <span class="mi">0</span> <span class="c1">//录音文件长度</span>
+        <span class="p">,</span>
+      <span class="na">buffer</span><span class="p">:</span> <span class="p">[]</span> <span class="c1">//录音缓存</span>
+        <span class="p">,</span>
+      <span class="na">inputSampleRate</span><span class="p">:</span> <span class="nx">context</span><span class="p">.</span><span class="nx">sampleRate</span> <span class="c1">//输入采样率</span>
+        <span class="p">,</span>
+      <span class="na">inputSampleBits</span><span class="p">:</span> <span class="mi">16</span> <span class="c1">//输入采样数位 8, 16</span>
+        <span class="p">,</span>
+      <span class="na">outputSampleRate</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">sampleRate</span> <span class="c1">//输出采样率</span>
+        <span class="p">,</span>
+      <span class="na">oututSampleBits</span><span class="p">:</span> <span class="nx">config</span><span class="p">.</span><span class="nx">sampleBits</span> <span class="c1">//输出采样数位 8, 16</span>
+        <span class="p">,</span>
+      <span class="na">input</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">data</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="k">new</span> <span class="nb">Float32Array</span><span class="p">(</span><span class="nx">data</span><span class="p">));</span>
+        <span class="k">this</span><span class="p">.</span><span class="nx">size</span> <span class="o">+=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span>
+      <span class="p">},</span>
+      <span class="na">compress</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span> <span class="c1">//合并压缩</span>
+        <span class="c1">//合并</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Float32Array</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">size</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">data</span><span class="p">.</span><span class="kd">set</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">[</span><span class="nx">i</span><span class="p">],</span> <span class="nx">offset</span><span class="p">);</span>
+          <span class="nx">offset</span> <span class="o">+=</span> <span class="k">this</span><span class="p">.</span><span class="nx">buffer</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">length</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="c1">//压缩</span>
+        <span class="kd">var</span> <span class="nx">compression</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputSampleRate</span> <span class="o">/</span> <span class="k">this</span><span class="p">.</span><span class="nx">outputSampleRate</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">length</span> <span class="o">=</span> <span class="nx">data</span><span class="p">.</span><span class="nx">length</span> <span class="o">/</span> <span class="nx">compression</span><span class="p">;</span>
+        <span class="kd">var</span> <span class="nx">result</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">Float32Array</span><span class="p">(</span><span class="nx">length</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">index</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+          <span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+        <span class="k">while</span> <span class="p">(</span><span class="nx">index</span> <span class="o">&lt;</span> <span class="nx">length</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">result</span><span class="p">[</span><span class="nx">index</span><span class="p">]</span> <span class="o">=</span> <span class="nx">data</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+          <span class="nx">j</span> <span class="o">+=</span> <span class="nx">compression</span><span class="p">;</span>
+          <span class="nx">index</span><span class="o">++</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="nx">result</span><span class="p">;</span>
+      <span class="p">},</span>
+      <span class="na">encodeWAV</span><span class="p">:</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="kd">var</span> <span class="nx">sampleRate</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputSampleRate</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">outputSampleRate</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">sampleBits</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">inputSampleBits</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">oututSampleBits</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">bytes</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">compress</span><span class="p">();</span>
+        <span class="kd">var</span> <span class="nx">dataLength</span> <span class="o">=</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">length</span> <span class="o">*</span> <span class="p">(</span><span class="nx">sampleBits</span> <span class="o">/</span> <span class="mi">8</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">buffer</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">ArrayBuffer</span><span class="p">(</span><span class="mi">44</span> <span class="o">+</span> <span class="nx">dataLength</span><span class="p">);</span>
+        <span class="kd">var</span> <span class="nx">data</span> <span class="o">=</span> <span class="k">new</span> <span class="nb">DataView</span><span class="p">(</span><span class="nx">buffer</span><span class="p">);</span>
+
+        <span class="kd">var</span> <span class="nx">channelCount</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="c1">//单声道</span>
+        <span class="kd">var</span> <span class="nx">offset</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+
+        <span class="kd">var</span> <span class="nx">writeString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">str</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">str</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">setUint8</span><span class="p">(</span><span class="nx">offset</span> <span class="o">+</span> <span class="nx">i</span><span class="p">,</span> <span class="nx">str</span><span class="p">.</span><span class="nx">charCodeAt</span><span class="p">(</span><span class="nx">i</span><span class="p">));</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// 资源交换文件标识符</span>
+        <span class="nx">writeString</span><span class="p">(</span><span class="dl">'</span><span class="s1">RIFF</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 下个地址开始到文件尾总字节数,即文件大小-8</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint32</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="mi">36</span> <span class="o">+</span> <span class="nx">dataLength</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// WAV文件标志</span>
+        <span class="nx">writeString</span><span class="p">(</span><span class="dl">'</span><span class="s1">WAVE</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 波形格式标志</span>
+        <span class="nx">writeString</span><span class="p">(</span><span class="dl">'</span><span class="s1">fmt </span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 过滤字节,一般为 0x10 = 16</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint32</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="mi">16</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 格式类别 (PCM形式采样数据)</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint16</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="c1">// 通道数</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint16</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">channelCount</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="c1">// 采样率,每秒样本数,表示每个通道的播放速度</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint32</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">sampleRate</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 波形数据传输率 (每秒平均字节数) 单声道×每秒数据位数×每样本数据位/8</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint32</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">channelCount</span> <span class="o">*</span> <span class="nx">sampleRate</span> <span class="o">*</span> <span class="p">(</span><span class="nx">sampleBits</span> <span class="o">/</span> <span class="mi">8</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 快数据调整数 采样一次占用字节数 单声道×每样本的数据位数/8</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint16</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">channelCount</span> <span class="o">*</span> <span class="p">(</span><span class="nx">sampleBits</span> <span class="o">/</span> <span class="mi">8</span><span class="p">),</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="c1">// 每样本数据位数</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint16</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">sampleBits</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">;</span>
+        <span class="c1">// 数据标识符</span>
+        <span class="nx">writeString</span><span class="p">(</span><span class="dl">'</span><span class="s1">data</span><span class="dl">'</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 采样数据总数,即数据总大小-44</span>
+        <span class="nx">data</span><span class="p">.</span><span class="nx">setUint32</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">dataLength</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+        <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">4</span><span class="p">;</span>
+        <span class="c1">// 写入采样数据</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">sampleBits</span> <span class="o">===</span> <span class="mi">8</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">,</span> <span class="nx">offset</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">bytes</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+            <span class="kd">var</span> <span class="nx">val</span> <span class="o">=</span> <span class="nx">s</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="nx">s</span> <span class="o">*</span> <span class="mh">0x8000</span> <span class="p">:</span> <span class="nx">s</span> <span class="o">*</span> <span class="mh">0x7FFF</span><span class="p">;</span>
+            <span class="nx">val</span> <span class="o">=</span> <span class="nb">parseInt</span><span class="p">(</span><span class="mi">255</span> <span class="o">/</span> <span class="p">(</span><span class="mi">65535</span> <span class="o">/</span> <span class="p">(</span><span class="nx">val</span> <span class="o">+</span> <span class="mi">32768</span><span class="p">)));</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">setInt8</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">val</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">bytes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">,</span> <span class="nx">offset</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">s</span> <span class="o">=</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">max</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="nb">Math</span><span class="p">.</span><span class="nx">min</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nx">bytes</span><span class="p">[</span><span class="nx">i</span><span class="p">]));</span>
+            <span class="nx">data</span><span class="p">.</span><span class="nx">setInt16</span><span class="p">(</span><span class="nx">offset</span><span class="p">,</span> <span class="nx">s</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="p">?</span> <span class="nx">s</span> <span class="o">*</span> <span class="mh">0x8000</span> <span class="p">:</span> <span class="nx">s</span> <span class="o">*</span> <span class="mh">0x7FFF</span><span class="p">,</span> <span class="kc">true</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="k">return</span> <span class="k">new</span> <span class="nx">Blob</span><span class="p">([</span><span class="nx">data</span><span class="p">],</span> <span class="p">{</span>
+          <span class="na">type</span><span class="p">:</span> <span class="dl">'</span><span class="s1">audio/wav</span><span class="dl">'</span>
+        <span class="p">});</span>
+      <span class="p">}</span>
+    <span class="p">};</span>
+
+    <span class="c1">//开始录音</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">start</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="nx">audioInput</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">recorder</span><span class="p">);</span>
+      <span class="nx">recorder</span><span class="p">.</span><span class="nx">connect</span><span class="p">(</span><span class="nx">context</span><span class="p">.</span><span class="nx">destination</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">//停止</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">stop</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="nx">recorder</span><span class="p">.</span><span class="nx">disconnect</span><span class="p">();</span>
+      <span class="nx">setTimeout</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+          <span class="nx">audioData</span><span class="p">.</span><span class="nx">size</span> <span class="o">=</span> <span class="mi">0</span>
+          <span class="nx">audioData</span><span class="p">.</span><span class="nx">buffer</span> <span class="o">=</span> <span class="p">[]</span>
+      <span class="p">},</span> <span class="mi">0</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">//获取音频文件</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">getBlob</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">stop</span><span class="p">();</span>
+      <span class="k">return</span> <span class="nx">audioData</span><span class="p">.</span><span class="nx">encodeWAV</span><span class="p">();</span>
+    <span class="p">}</span>
+
+    <span class="c1">//回放</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">play</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">audio</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">audio</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="k">this</span><span class="p">.</span><span class="nx">getBlob</span><span class="p">());</span>
+    <span class="p">}</span>
+
+    <span class="c1">//上传</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">upload</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">url</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      <span class="kd">var</span> <span class="nx">fd</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">FormData</span><span class="p">();</span>
+      <span class="nx">fd</span><span class="p">.</span><span class="nx">append</span><span class="p">(</span><span class="dl">"</span><span class="s2">audioData</span><span class="dl">"</span><span class="p">,</span> <span class="k">this</span><span class="p">.</span><span class="nx">getBlob</span><span class="p">());</span>
+      <span class="kd">var</span> <span class="nx">xhr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">XMLHttpRequest</span><span class="p">();</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">upload</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">progress</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">callback</span><span class="p">(</span><span class="dl">'</span><span class="s1">uploading</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">load</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">callback</span><span class="p">(</span><span class="dl">'</span><span class="s1">ok</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">error</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">callback</span><span class="p">(</span><span class="dl">'</span><span class="s1">error</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+        <span class="nx">xhr</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">abort</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nx">callback</span><span class="p">(</span><span class="dl">'</span><span class="s1">cancel</span><span class="dl">'</span><span class="p">,</span> <span class="nx">e</span><span class="p">);</span>
+        <span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+      <span class="p">}</span>
+      <span class="nx">xhr</span><span class="p">.</span><span class="nx">open</span><span class="p">(</span><span class="dl">"</span><span class="s2">POST</span><span class="dl">"</span><span class="p">,</span> <span class="nx">url</span><span class="p">);</span>
+      <span class="nx">xhr</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span><span class="nx">fd</span><span class="p">);</span>
+    <span class="p">}</span>
+
+    <span class="c1">//音频采集</span>
+    <span class="nx">recorder</span><span class="p">.</span><span class="nx">onaudioprocess</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">e</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">audioData</span><span class="p">.</span><span class="nx">input</span><span class="p">(</span><span class="nx">e</span><span class="p">.</span><span class="nx">inputBuffer</span><span class="p">.</span><span class="nx">getChannelData</span><span class="p">(</span><span class="mi">0</span><span class="p">));</span>
+      <span class="c1">//record(e.inputBuffer.getChannelData(0));</span>
+    <span class="p">}</span>
+
+  <span class="p">};</span>
+  <span class="c1">//抛出异常</span>
+  <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">throwError</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">message</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">alert</span><span class="p">(</span><span class="nx">message</span><span class="p">);</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">toString</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">()</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="nx">message</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="c1">//是否支持录音</span>
+  <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">canRecording</span> <span class="o">=</span> <span class="p">(</span><span class="nb">navigator</span><span class="p">.</span><span class="nx">getUserMedia</span> <span class="o">!=</span> <span class="kc">null</span><span class="p">);</span>
+  <span class="c1">//获取录音机</span>
+  <span class="nx">HZRecorder</span><span class="p">.</span><span class="kd">get</span> <span class="o">=</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">callback</span><span class="p">,</span> <span class="nx">config</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nb">navigator</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nb">navigator</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span>
+            <span class="na">audio</span><span class="p">:</span> <span class="kc">true</span>
+          <span class="p">}</span> <span class="c1">//只启用音频</span>
+          <span class="p">,</span>
+          <span class="kd">function</span> <span class="p">(</span><span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
+            <span class="kd">var</span> <span class="nx">rec</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">HZRecorder</span><span class="p">(</span><span class="nx">stream</span><span class="p">,</span> <span class="nx">config</span><span class="p">);</span>
+            <span class="nx">callback</span><span class="p">(</span><span class="nx">rec</span><span class="p">);</span>
+          <span class="p">},</span>
+          <span class="kd">function</span> <span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+            <span class="k">switch</span> <span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">code</span> <span class="o">||</span> <span class="nx">error</span><span class="p">.</span><span class="nx">name</span><span class="p">)</span> <span class="p">{</span>
+              <span class="k">case</span> <span class="dl">'</span><span class="s1">PERMISSION_DENIED</span><span class="dl">'</span><span class="p">:</span>
+              <span class="k">case</span> <span class="dl">'</span><span class="s1">PermissionDeniedError</span><span class="dl">'</span><span class="p">:</span>
+                <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="dl">'</span><span class="s1">用户拒绝提供信息。</span><span class="dl">'</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+              <span class="k">case</span> <span class="dl">'</span><span class="s1">NOT_SUPPORTED_ERROR</span><span class="dl">'</span><span class="p">:</span>
+              <span class="k">case</span> <span class="dl">'</span><span class="s1">NotSupportedError</span><span class="dl">'</span><span class="p">:</span>
+                <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="dl">'</span><span class="s1">浏览器不支持硬件设备。</span><span class="dl">'</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+              <span class="k">case</span> <span class="dl">'</span><span class="s1">MANDATORY_UNSATISFIED_ERROR</span><span class="dl">'</span><span class="p">:</span>
+              <span class="k">case</span> <span class="dl">'</span><span class="s1">MandatoryUnsatisfiedError</span><span class="dl">'</span><span class="p">:</span>
+                <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="dl">'</span><span class="s1">无法发现指定的硬件设备。</span><span class="dl">'</span><span class="p">);</span>
+                <span class="k">break</span><span class="p">;</span>
+              <span class="nl">default</span><span class="p">:</span>
+                <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">throwError</span><span class="p">(</span><span class="dl">'</span><span class="s1">无法打开麦克风。异常信息:</span><span class="dl">'</span> <span class="o">+</span> <span class="p">(</span><span class="nx">error</span><span class="p">.</span><span class="nx">code</span> <span class="o">||</span> <span class="nx">error</span><span class="p">.</span><span class="nx">name</span><span class="p">));</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+          <span class="p">});</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">HZRecorder</span><span class="p">.</span><span class="nx">throwErr</span><span class="p">(</span><span class="dl">'</span><span class="s1">当前浏览器不支持录音功能。</span><span class="dl">'</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="nb">window</span><span class="p">.</span><span class="nx">HZRecorder</span> <span class="o">=</span> <span class="nx">HZRecorder</span><span class="p">;</span>
+
+<span class="p">})(</span><span class="nb">window</span><span class="p">);</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>具体压缩的算法目前还没有仔细看,其中要注意的是将blob发送到服务端是会被自动转成arraybuffer,接受的时候要重新Blob一次才能在audio中正常播放,播放时长的话audio的duration是可以自动解析出来的。</p>
+
+<h2 id="补充">补充</h2>
+
+<p>补充提醒一下 目前navigator.getUserMedia已经废弃了但是还在用</p>
+
+<p>现在替换的api是navigator.mediaDevices.getUserMedia 还没测试兼容性 mdn上写的是safari和opera都不支持所以简单做了处理代码 上述还未更新</p>
+
+<p>简单介绍一下用法,更新了promise</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="nb">navigator</span><span class="p">.</span><span class="nx">mediaDevices</span><span class="p">.</span><span class="nx">getUserMedia</span><span class="p">({</span><span class="na">audio</span><span class="p">:</span><span class="kc">true</span><span class="p">})</span>
+<span class="p">.</span><span class="nx">then</span><span class="p">(</span><span class="kd">function</span><span class="p">(</span><span class="nx">mediaStream</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">mediaStream</span><span class="p">)</span>
+  <span class="p">};</span>
+<span class="p">})</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

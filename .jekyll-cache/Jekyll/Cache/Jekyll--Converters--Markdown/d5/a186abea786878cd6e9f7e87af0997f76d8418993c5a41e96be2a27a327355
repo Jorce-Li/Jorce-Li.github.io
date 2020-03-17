@@ -1,0 +1,33 @@
+I"�<p>Update: 略读vue2.0源码</p>
+
+<hr />
+<p>此篇文章记录自己在看Vue.js源码分析书籍时候的一些点。</p>
+
+<h2 id="vue本质上还是一个function在prototype上挂在了许多扩展的方法">Vue本质上还是一个function，在prototype上挂在了许多扩展的方法</h2>
+<p>注：为什么不用class而是用function?</p>
+
+<p>因为在prototype上扩展方法的时候，可以在多个模块中分别维护，而class则是在一个模块中实现所有，实现多个模块维护并不方便。</p>
+<h2 id="new-vue之后的流程">new Vue之后的流程</h2>
+<p>进行一系列初始化过程&gt;如果有el则使用$mount进行挂载</p>
+<blockquote>
+  <p>调用mountComponent方法中的vm._render生成虚拟dom之后再实例化一个watcher，再调用updateComponent 中的vm._update更新dom）</p>
+</blockquote>
+
+<blockquote>
+  <p>vm._isMounted为true时，可以调用mounted方法了。</p>
+</blockquote>
+
+<p>  注：1）虚拟dom：浏览器中真实DOM的属性过多，create一个的成本比较高，因此引入了虚拟dom-VNode，本质上是一个原生的js对象。（Vue 借鉴了 snabbdom）VNode本身不包含操作dom的方法，所以更轻量。</p>
+
+<blockquote>
+  <p>vm._render.createElement ：使用此方法创建一个VNode,每个都有自己的子节点又是一个VNode，模拟真实的DOM Tree</p>
+</blockquote>
+
+<blockquote>
+  <p>vm._update._patch:patch主要用来做不同平台dom渲染，首次渲染调用createElm ，递归创建VNode，调用原生的insert和append方法挂在到DOM Tree.</p>
+</blockquote>
+
+<p>↓拿来的图：
+<img src="/img/in-post/new-vue.png" alt="auto-focus" /></p>
+
+:ET

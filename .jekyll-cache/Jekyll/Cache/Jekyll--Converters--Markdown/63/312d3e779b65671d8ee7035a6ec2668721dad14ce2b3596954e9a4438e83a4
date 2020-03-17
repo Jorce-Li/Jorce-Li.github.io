@@ -1,0 +1,68 @@
+I"z<p>Update: iframe父子传值的问题</p>
+
+<hr />
+
+<p>公司需求做一个左右分栏的页面，因为项目比较大，所以左侧页面需要用iframe链接另外一个服务器的地址，因而本次记录一下使用过程中的问题</p>
+
+<h2 id="跨域">跨域</h2>
+
+<p>  两个项目是挂在两个服务器上的，所以父子组件不能用dom直接拿，</p>
+
+<p>  所以使用以下的两个方法</p>
+<h5 id="子页面">子页面</h5>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre>  <span class="kd">function</span> <span class="nx">receiveMessage</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+
+      <span class="nx">event</span><span class="p">.</span><span class="nx">source</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="dl">"</span><span class="s2">成功获取直播资源</span><span class="dl">"</span><span class="p">,</span>
+
+      <span class="nx">event</span><span class="p">.</span><span class="nx">origin</span><span class="p">);</span>
+
+  <span class="p">}</span>
+
+<span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">message</span><span class="dl">"</span><span class="p">,</span> <span class="nx">receiveMessage</span><span class="p">,</span> <span class="kc">false</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h5 id="父页面">父页面</h5>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre>  <span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">querySelector</span><span class="p">(</span><span class="dl">'</span><span class="s1">#id</span><span class="dl">'</span><span class="p">).</span><span class="nx">contentWindow</span>
+
+  <span class="nx">iframe</span><span class="p">.</span><span class="nx">postMessage</span><span class="p">(</span><span class="nx">msg</span><span class="p">,</span> <span class="nx">url</span><span class="p">)</span>
+
+  <span class="nb">window</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="dl">"</span><span class="s2">message</span><span class="dl">"</span><span class="p">,</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">obj</span><span class="p">)</span> <span class="p">{</span>
+
+  <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="mi">999</span><span class="p">,</span> <span class="nx">obj</span><span class="p">)</span>
+
+  <span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>2.局部刷新</p>
+
+<p>有需求是需要只让iframe刷新获得数据，而父页面不刷新</p>
+
+<p>1.同域</p>
+
+<p>document.getElementById(‘id’).contentWindow.location.reload(true);</p>
+
+<p>2.跨域</p>
+
+<p>这块的话如果src不变，我推荐的方法是用postmessage来传数据。</p>
+
+<h3 id="注很多博主疯狂转载的documentframes已经没了">注：很多博主疯狂转载的document.frames已经没了。</h3>
+:ET

@@ -1,0 +1,229 @@
+I"6<p>Update: 同上一篇还是在做聊天室,本篇主要讲述语音部分</p>
+
+<hr />
+
+<p>在线传输主要使用了 webRTC,这块以后看多了会再细讲。
+不同于 socket 的是:客户端端对客户端端通过服务端进行验证之后,端对端直接进行 stream 传输</p>
+
+<h1 id="1创建-webrtc-连接">1.创建 webRTC 连接</h1>
+
+<p>先上代码,等有空了再细谈</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">isCaller</span> <span class="o">=</span> <span class="kc">true</span><span class="p">;</span>
+
+<span class="c1">// 与信令服务器的WebSocket连接</span>
+<span class="kd">var</span> <span class="nx">socket</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">WebSocket</span><span class="p">(</span><span class="dl">"</span><span class="s2">ws://127.0.0.1:3000</span><span class="dl">"</span><span class="p">);</span>
+
+<span class="c1">// stun和turn服务器</span>
+<span class="kd">var</span> <span class="nx">iceServer</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="na">iceServers</span><span class="p">:</span> <span class="p">[</span>
+        <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="dl">"</span><span class="s2">stun:stun.l.google.com:19302</span><span class="dl">"</span>
+        <span class="p">},</span>
+        <span class="p">{</span>
+            <span class="na">url</span><span class="p">:</span> <span class="dl">"</span><span class="s2">turn:numb.viagenie.ca</span><span class="dl">"</span><span class="p">,</span>
+            <span class="na">username</span><span class="p">:</span> <span class="dl">"</span><span class="s2">webrtc@live.com</span><span class="dl">"</span><span class="p">,</span>
+            <span class="na">credential</span><span class="p">:</span> <span class="dl">"</span><span class="s2">muazkh</span><span class="dl">"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">};</span>
+
+<span class="c1">// 创建PeerConnection实例 (参数为null则没有iceserver，即使没有stunserver和turnserver，仍可在局域网下通讯)</span>
+<span class="kd">var</span> <span class="nx">pc</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">webkitRTCPeerConnection</span><span class="p">(</span><span class="nx">iceServer</span><span class="p">);</span>
+
+<span class="c1">// 发送ICE候选到其他客户端</span>
+<span class="nx">pc</span><span class="p">.</span><span class="nx">onicecandidate</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">candidate</span> <span class="o">!==</span> <span class="kc">null</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span>
+            <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+                <span class="na">event</span><span class="p">:</span> <span class="dl">"</span><span class="s2">_ice_candidate</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">candidate</span><span class="p">:</span> <span class="nx">event</span><span class="p">.</span><span class="nx">candidate</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+
+<span class="c1">// 如果检测到媒体流连接到本地，将其绑定到一个video标签上输出</span>
+<span class="nx">pc</span><span class="p">.</span><span class="nx">onaddstream</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">remoteVideo</span><span class="dl">"</span><span class="p">).</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span>
+        <span class="nx">event</span><span class="p">.</span><span class="nx">stream</span>
+    <span class="p">);</span>
+<span class="p">};</span>
+
+<span class="c1">// 发送offer和answer的函数，发送本地session描述</span>
+<span class="kd">var</span> <span class="nx">sendOfferFn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">desc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">pc</span><span class="p">.</span><span class="nx">setLocalDescription</span><span class="p">(</span><span class="nx">desc</span><span class="p">);</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span>
+            <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+                <span class="na">event</span><span class="p">:</span> <span class="dl">"</span><span class="s2">_offer</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">sdp</span><span class="p">:</span> <span class="nx">desc</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">);</span>
+    <span class="p">},</span>
+    <span class="nx">sendAnswerFn</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">desc</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">pc</span><span class="p">.</span><span class="nx">setLocalDescription</span><span class="p">(</span><span class="nx">desc</span><span class="p">);</span>
+        <span class="nx">socket</span><span class="p">.</span><span class="nx">send</span><span class="p">(</span>
+            <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">({</span>
+                <span class="na">event</span><span class="p">:</span> <span class="dl">"</span><span class="s2">_answer</span><span class="dl">"</span><span class="p">,</span>
+                <span class="na">data</span><span class="p">:</span> <span class="p">{</span>
+                    <span class="na">sdp</span><span class="p">:</span> <span class="nx">desc</span>
+                <span class="p">}</span>
+            <span class="p">})</span>
+        <span class="p">);</span>
+    <span class="p">};</span>
+
+<span class="c1">// 获取本地音频和视频流</span>
+<span class="nb">navigator</span><span class="p">.</span><span class="nx">webkitGetUserMedia</span><span class="p">(</span>
+    <span class="p">{</span>
+        <span class="na">audio</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+        <span class="na">video</span><span class="p">:</span> <span class="kc">true</span>
+    <span class="p">},</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">stream</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//绑定本地媒体流到video标签用于输出</span>
+        <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">"</span><span class="s2">localVideo</span><span class="dl">"</span><span class="p">).</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">URL</span><span class="p">.</span><span class="nx">createObjectURL</span><span class="p">(</span><span class="nx">stream</span><span class="p">);</span>
+        <span class="c1">//向PeerConnection中加入需要发送的流</span>
+        <span class="nx">pc</span><span class="p">.</span><span class="nx">addStream</span><span class="p">(</span><span class="nx">stream</span><span class="p">);</span>
+        <span class="c1">//如果是发起方则发送一个offer信令</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">isCaller</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">pc</span><span class="p">.</span><span class="nx">createOffer</span><span class="p">(</span><span class="nx">sendOfferFn</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Failure callback: </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">error</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">},</span>
+    <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+        <span class="c1">//处理媒体流创建失败错误</span>
+        <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">getUserMedia error: </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">error</span><span class="p">);</span>
+    <span class="p">}</span>
+<span class="p">);</span>
+
+<span class="c1">//处理到来的信令</span>
+<span class="nx">socket</span><span class="p">.</span><span class="nx">onmessage</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">event</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">json</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">event</span><span class="p">.</span><span class="nx">data</span><span class="p">);</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">onmessage: </span><span class="dl">"</span><span class="p">,</span> <span class="nx">json</span><span class="p">);</span>
+    <span class="c1">//如果是一个ICE的候选，则将其加入到PeerConnection中，否则设定对方的session描述为传递过来的描述</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">event</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">_ice_candidate</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">pc</span><span class="p">.</span><span class="nx">addIceCandidate</span><span class="p">(</span><span class="k">new</span> <span class="nx">RTCIceCandidate</span><span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">candidate</span><span class="p">));</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nx">pc</span><span class="p">.</span><span class="nx">setRemoteDescription</span><span class="p">(</span><span class="k">new</span> <span class="nx">RTCSessionDescription</span><span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">data</span><span class="p">.</span><span class="nx">sdp</span><span class="p">));</span>
+        <span class="c1">// 如果是一个offer，那么需要回复一个answer</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">json</span><span class="p">.</span><span class="nx">event</span> <span class="o">===</span> <span class="dl">"</span><span class="s2">_offer</span><span class="dl">"</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">pc</span><span class="p">.</span><span class="nx">createAnswer</span><span class="p">(</span><span class="nx">sendAnswerFn</span><span class="p">,</span> <span class="kd">function</span><span class="p">(</span><span class="nx">error</span><span class="p">)</span> <span class="p">{</span>
+                <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="dl">"</span><span class="s2">Failure callback: </span><span class="dl">"</span> <span class="o">+</span> <span class="nx">error</span><span class="p">);</span>
+            <span class="p">});</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

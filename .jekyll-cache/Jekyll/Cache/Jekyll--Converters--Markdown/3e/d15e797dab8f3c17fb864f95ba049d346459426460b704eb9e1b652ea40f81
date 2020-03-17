@@ -1,0 +1,314 @@
+I"�=<p>Update:首屏优化</p>
+
+<hr />
+
+<p>最近公司项目遇到的问题是要提升网站的首屏加载速度以及chrome的评分。
+本项目是二次开发，他们旧网站的评分是40/15(destop/mobile) =&gt; 90/75</p>
+
+<p>看到这个分差距的时候，吓了一跳，因为之前没用过这个评分，也没仔细做过首屏优化，所以在公司fullstack的帮助下进行了这次浩瀚的工程。</p>
+
+<h2 id="indexhbs的所有文件按需加载">index.hbs的所有文件按需加载</h2>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+</pre></td><td class="rouge-code"><pre><span class="k">export</span> <span class="kd">const</span> <span class="nx">loadJS</span> <span class="o">=</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">mapJs</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">script</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">mapJs</span><span class="p">.</span><span class="nx">type</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">text/javascript</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nx">mapJs</span><span class="p">.</span><span class="nx">src</span> <span class="o">=</span> <span class="nx">src</span><span class="p">;</span>
+    <span class="nx">mapJs</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">;</span>
+    <span class="nx">mapJs</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">mapJs</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+
+<span class="k">export</span> <span class="kd">const</span> <span class="nx">loadCss</span> <span class="o">=</span> <span class="p">(</span><span class="nx">src</span><span class="p">,</span> <span class="nx">id</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+  <span class="k">return</span> <span class="o">!</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="nx">id</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="k">new</span> <span class="nb">Promise</span><span class="p">((</span><span class="nx">resolve</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="nx">css</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">link</span><span class="dl">'</span><span class="p">);</span>
+    <span class="nx">css</span><span class="p">.</span><span class="nx">rel</span> <span class="o">=</span> <span class="dl">'</span><span class="s1">stylesheet</span><span class="dl">'</span><span class="p">;</span>
+    <span class="nx">css</span><span class="p">.</span><span class="nx">href</span> <span class="o">=</span> <span class="nx">src</span><span class="p">;</span>
+    <span class="nx">css</span><span class="p">.</span><span class="nx">id</span> <span class="o">=</span> <span class="nx">id</span><span class="p">;</span>
+    <span class="nx">css</span><span class="p">.</span><span class="nx">onload</span> <span class="o">=</span> <span class="nx">resolve</span><span class="p">;</span>
+    <span class="nb">document</span><span class="p">.</span><span class="nx">head</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">css</span><span class="p">);</span>
+  <span class="p">});</span>
+<span class="p">};</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>然后在使用该scirpt或css的地方进行引入就好了，注意的点是不要重复加载 所以使用了id</p>
+
+<h2 id="使用loadable进行按需加载">使用loadable进行按需加载</h2>
+
+<p>之前使用vue的项目中，vue-router已经有了按需加载的封装，本次使用react，所以另外使用了loadable进行按需加载</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre>  <span class="c1">//在需要引入的组件或页面使用loadable进行初始化</span>
+  <span class="k">import</span> <span class="nx">loadable</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@loadable/component</span><span class="dl">'</span><span class="p">;</span>
+  <span class="kd">const</span> <span class="nx">PopupForm</span> <span class="o">=</span> <span class="nx">loadable</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="k">import</span><span class="p">(</span><span class="dl">'</span><span class="s1">@components/PopupForm</span><span class="dl">'</span><span class="p">));</span>
+  <span class="c1">//在 init app 中 使用loadableReady 进行包裹使其生效</span>
+  <span class="k">import</span> <span class="p">{</span> <span class="nx">loadableReady</span> <span class="p">}</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">@loadable/component</span><span class="dl">'</span><span class="p">;</span>
+  <span class="nx">loadableReady</span><span class="p">(()</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">hydrate</span><span class="p">(</span>
+      <span class="o">&lt;</span><span class="nx">App</span> <span class="nx">store</span><span class="o">=</span><span class="p">{</span><span class="nx">store</span><span class="p">}</span> <span class="sr">/&gt;</span><span class="err">,
+</span>      <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="dl">'</span><span class="s1">app</span><span class="dl">'</span><span class="p">)</span>
+    <span class="p">);</span>
+  <span class="p">});</span>
+  <span class="c1">//在webapck plugin中初始化</span>
+  <span class="kd">const</span> <span class="nx">LoadablePlugin</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">@loadable/webpack-plugin</span><span class="dl">'</span><span class="p">);</span>
+  <span class="k">new</span> <span class="nx">LoadablePlugin</span><span class="p">(),</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="使用react-lazyload进行图片懒加载">使用react-lazyload进行图片懒加载</h2>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>    <span class="c1">//对于footer header等下拉的组件 直接进行包裹</span>
+    <span class="c1">//对于图片也是一样 直接包裹img标签即可，这要求网站预先要使用相同的img组件 最为快捷</span>
+    <span class="c1">//offset 指向下滚动的加载偏移量</span>
+    <span class="k">import</span> <span class="nx">LazyLoad</span> <span class="k">from</span> <span class="dl">'</span><span class="s1">react-lazyload</span><span class="dl">'</span><span class="p">;</span>
+    <span class="o">&lt;</span><span class="nx">LazyLoad</span> <span class="nx">height</span><span class="o">=</span><span class="p">{</span><span class="mi">665</span><span class="p">}</span> <span class="nx">offset</span><span class="o">=</span><span class="p">{</span><span class="mi">200</span><span class="p">}</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="nx">Footer</span> <span class="o">/&gt;</span>
+    <span class="o">&lt;</span><span class="sr">/LazyLoad</span><span class="err">&gt;
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="webpack-相关打包插件">webpack 相关打包插件</h2>
+
+<h3 id="minicssextractplugin">MiniCssExtractPlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+</pre></td><td class="rouge-code"><pre>在webpack4之前使用过的包是extract-text-webpack-plugin,作用是将css样式提取到单独的文件当中来，即使用import进行引入，支持SourceMaps按需加载。 ```js
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// 在loader中使用， 此处注意，此插件默认不支持hmr,所以需要手动开启
+{
+  test: /\.scss$/,
+  use: [
+    // extract-text-webpack-plugin has bug in webpack4
+    {
+      loader: MiniCssExtractPlugin.loader,
+      // 默认情况下，使用的是webpackOptions.output中publicPath
+      publicPath: './',
+      options: {
+        hmr: process.env.NODE_ENV === 'development'
+      }
+    },
+    // MiniCssExtractPlugin.loader,
+    'css-loader?sourceMap',
+    'postcss-loader?sourceMap',
+    'sass-loader?sourceMap',
+  ],
+},
+// 在plugins中 初始化
+new MiniCssExtractPlugin({
+  filename: 'css/style.[chunkhash].css',
+  chunkFilename: 'css/style.[id].[chunkhash].css',
+}), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="copywebpackplugin">CopyWebpackPlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+</pre></td><td class="rouge-code"><pre>此插件不是用于优化，而是因为是SSR项目，便于更换IP等设置，所以将打包文件复制一份打包方便操作。 ```js
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+// flatten的意思是忽略文件层级,全部展平
+new CopyWebpackPlugin([
+  { from: `${PATH_SRC}/vendor/*`, to: `${PATH_PUBLIC}/vendor/`, flatten: true },
+  { from: 'src/assets', to: `${PATH_PUBLIC}/assets/` },
+  {
+    from: `${PATH_SRC}/*.txt`,
+    to: `${PATH_PUBLIC}/[name].[ext]`,
+  },
+  { from: `${PATH_SRC}/index.hbs`, to: `${PATH_DIST}` }
+]), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="defineplugin">DefinePlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre>此插件不是用于优化，而是重新定义环境变量，这样就可以忽略构建时所定义的内容 ```js
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+new webpack.DefinePlugin({
+  'process.env': {
+    IS_BROWSER: JSON.stringify(true),
+  },
+}), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="ignoreplugin">IgnorePlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>这个插件的作用是打包时忽略第三包的指定目录，即按需打包～ ```js
+// 例如moment包很大，我们只用了计算时间的问题，并不需要计算时区等，所以要减小这个包的大小。
+new webpack.IgnorePlugin(/^\.\/locale$/, /moment$/), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="cleanwebpackplugin">CleanWebpackPlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>这个插件的作用是清除打包时生成的bundle文件，重新打包的过程中不会清除上一次打包的bundle文件 ```js
+const CleanWebpackPlugin = require('clean-webpack-plugin');
+// 新版本不需要传参数
+new CleanWebpackPlugin([PATH_PUBLIC], { exclude: ['.gitignore'] }), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="sourcemapdevtoolplugin">SourceMapDevToolPlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>用于打包后报错 ```js
+new webpack.SourceMapDevToolPlugin(), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="optimizecssassetsplugin">OptimizeCssAssetsPlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>用于压缩css ```js
+const OptimizeCssAssetsPlugin = require('optimize-css-assets-webpack-plugin');
+new OptimizeCssAssetsPlugin(), ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="compressionplugin">CompressionPlugin</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+</pre></td><td class="rouge-code"><pre>用于压缩成gzip或其他格式上线 ```js
+const CompressionPlugin = require('compression-webpack-plugin');
+new CompressionPlugin({
+  filename: '[path].gz[query]',
+  test: /\.(js|css|html|svg)$/,
+  threshold: 1024, // 只处理大于此大小的文件
+  minRatio: 0.8 // 最小压缩比例
+}),
+new CompressionPlugin({
+  filename: '[path].br[query]',
+  test: /\.(js|css|html|svg)$/,
+  threshold: 1024,
+  minRatio: 0.8,
+  algorithm: 'brotliCompress', //压缩格式
+  compressionOptions: { level: 11 }, // 压缩等级
+}), ``` &lt;!-- ### NodemonPlugin --&gt;
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="optimization">optimization</h3>
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+</pre></td><td class="rouge-code"><pre>用于优化打包策略 ```js
+optimization: {
+  noEmitOnErrors: true, // 编译错误时不生成资源
+  runtimeChunk: 'single', // manifest
+  splitChunks: {
+    // 缓存打包分离
+    cacheGroups: {
+      vendor: {
+        test: /[\\/]node_modules[\\/]/,
+        name: 'vendors',
+        chunks: 'initial',
+      }
+    }
+  }
+}, ```
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

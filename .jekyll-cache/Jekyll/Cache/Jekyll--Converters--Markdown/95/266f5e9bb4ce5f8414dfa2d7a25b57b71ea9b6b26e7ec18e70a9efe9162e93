@@ -1,0 +1,107 @@
+I"�<h3 id="cmder"><a href="http://cmder.net/">cmder</a></h3>
+
+<p>本人目前在windows下比较喜欢用的命令行工具,可以更方便的复制粘贴躲开等等功能。</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>cmder /register user
+
+cmder /register all
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="powershell插件">powershell插件</h3>
+
+<p>vscode插件 用于清晰地看出自己的代码的更新 - 显示所在分支及该分支added/modified/deleted/conflict的数量</p>
+
+<ul>
+  <li>
+    <p>设置权限</p>
+
+    <p><code class="highlighter-rouge">Set-ExecutionPolicy RemoteSigned -Scope CurrentUser -Confirm</code></p>
+  </li>
+  <li>
+    <p>使用PowerShellGet安装</p>
+
+    <p><code class="highlighter-rouge">PowerShellGet\Install-Module posh-git -Scope CurrentUser</code></p>
+  </li>
+  <li>
+    <p>v全局导入posh-git</p>
+
+    <p><code class="highlighter-rouge">Add-PoshGitToProfile -AllHosts</code></p>
+  </li>
+</ul>
+
+<h3 id="fiddler自定义规则">fiddler自定义规则</h3>
+
+<p>相比较postman更复杂功能却更多</p>
+
+<h4 id="修改请求">修改请求</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>static function OnBeforeRequest(oSession: Session) {
+    if (oSession.uriContains("https://......")) {
+        oSession.utilReplaceInRequest('"prodId": 1016995', '"prodId": 11111')
+    }
+}
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="修改响应">修改响应</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>static function OnBeforeResponse(oSession: Session) {
+    if (oSession.uriContains("......")) {
+        oSession.utilReplaceInResponse('"status": "1"', '"status": "2"')
+    }
+}
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h4 id="修改url传参">修改url传参</h4>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>static function OnBeforeRequest(oSession: Session) {
+    if (oSession.uriContains("......")) {
+        oSession.fullUrl = oSession.fullUrl.Replace("prodId=1017159", "prodId=111111");
+    }
+}
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="vscode插件">vscode插件</h3>
+
+<ul>
+  <li>Auto Rename Tag</li>
+  <li>AutoFileName</li>
+  <li>Beautify</li>
+  <li>Bookmarks</li>
+  <li>Bracket Pair Colorizer</li>
+  <li>Chinese (Simplified) Language Pack for Visual Studio Code</li>
+  <li>Class autocomplete for HTML</li>
+  <li>Code Runner</li>
+  <li>EditorConfig for VS Code</li>
+  <li>expand-region</li>
+  <li>indent-rainbow</li>
+  <li>npm Intellisense</li>
+  <li>Path Intellisense</li>
+  <li>Project Manager</li>
+  <li>React-Native/React/Redux snippets for es6/es7</li>
+  <li>Settings Sync</li>
+  <li>sftp</li>
+  <li>Vetur</li>
+  <li>VSCode Great Icons</li>
+  <li>vscode-element-helper</li>
+  <li>vscode-fileheader</li>
+</ul>
+
+:ET

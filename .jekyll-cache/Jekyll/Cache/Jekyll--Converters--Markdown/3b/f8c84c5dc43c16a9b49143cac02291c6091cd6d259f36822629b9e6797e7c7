@@ -1,0 +1,126 @@
+I"+<p>Update: 风格规范</p>
+
+<hr />
+
+<h1 id="vue">Vue</h1>
+
+<h3 id="data-必须是返回一个对象的函数">data 必须是返回一个对象的函数</h3>
+
+<p>为了避免data在此组件中所有实例共享,为了做到每个组件实例都管理其自己的数据，每个实例必须生成一个独立的数据对象。在 JavaScript 中，在一个函数中返回这个对象就可以了</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre>  <span class="nx">data</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="p">{</span>
+      <span class="na">listTitle</span><span class="p">:</span> <span class="dl">''</span><span class="p">,</span>
+      <span class="na">todos</span><span class="p">:</span> <span class="p">[]</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="props-定义">props 定义</h3>
+<p>按照下述代码定义的好处是:
+它们写明了组件的 API，所以很容易看懂组件的用法
+在开发环境下，如果向一个组件提供格式不正确的 prop，Vue 将会告警，以帮助你捕获潜在的错误来源。</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre>  <span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+    <span class="nl">status</span><span class="p">:</span> <span class="p">{</span>
+      <span class="nl">type</span><span class="p">:</span> <span class="nb">String</span><span class="p">,</span>
+      <span class="nx">required</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+      <span class="nx">validator</span><span class="p">:</span> <span class="kd">function</span> <span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="p">[</span>
+          <span class="dl">'</span><span class="s1">syncing</span><span class="dl">'</span><span class="p">,</span>
+          <span class="dl">'</span><span class="s1">synced</span><span class="dl">'</span><span class="p">,</span>
+          <span class="dl">'</span><span class="s1">version-conflict</span><span class="dl">'</span><span class="p">,</span>
+          <span class="dl">'</span><span class="s1">error</span><span class="dl">'</span>
+        <span class="p">].</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">value</span><span class="p">)</span> <span class="o">!==</span> <span class="o">-</span><span class="mi">1</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="v-for-不要和-v-if一起使用">v-for 不要和 v-if一起使用</h3>
+<p>如果一起使用的话会经过下述步骤</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre><span class="k">this</span><span class="p">.</span><span class="nx">users</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">user</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">user</span><span class="p">.</span><span class="nx">isActive</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">user</span><span class="p">.</span><span class="nx">name</span>
+  <span class="p">}</span>
+<span class="p">})</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>每次users改动的时候都会进行重新遍历,而不会根据isActive是否有所改变而变动。所以好的办法是
+将users进行监听过滤取消v-if 或者将-if移动到外层</p>
+
+<h3 id="css-js命名规范">css js命名规范</h3>
+<p>css需要加上scoped或者module
+同时起名时js要避免$,_,可能会与vue内置方法产生冲突
+css和js起名为了避免与引入引出的命名产生冲突,最好有特殊的前缀</p>
+
+<h3 id="组件起名规范">组件起名规范</h3>
+
+<ol>
+  <li>始终是单词大写开头CommonCase</li>
+  <li>使用连接符common-case</li>
+  <li>创建通用不包含状态管理的组件时(button table icon等),最好在规定前缀VButton</li>
+  <li>每个页面只使用一次的组件名称:TheCase,加上the前缀表示其一次性</li>
+  <li>父子相关联的特殊组件最好不要用文件夹嵌套,而是用父组件名称对子组件添加前缀的命名方式</li>
+  <li>针对该组件作用,将形容词放在前缀位置:SearchButton</li>
+  <li>引入的组件使用时推荐使用连接符<my-component></my-component>写法</li>
+  <li>组件名没必要为了缩短单词而使用缩写:stu=&gt;student</li>
+  <li>在声明 prop 的时候，其命名应该始终使用 camelCase，而在模板和 JSX 中应该始终使用 kebab-case。</li>
+</ol>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre><span class="nx">props</span><span class="p">:</span> <span class="p">{</span>
+  <span class="nl">greetingText</span><span class="p">:</span> <span class="nb">String</span>
+<span class="p">}</span>
+<span class="o">&lt;</span><span class="nx">WelcomeMessage</span> <span class="nx">greeting</span><span class="o">-</span><span class="nx">text</span><span class="o">=</span><span class="dl">"</span><span class="s2">hi</span><span class="dl">"</span><span class="o">/&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<ol>
+  <li>组件属性最好分行写,增加易读性</li>
+</ol>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>  <span class="o">&lt;</span><span class="nx">MyComponent</span>
+  <span class="nx">foo</span><span class="o">=</span><span class="dl">"</span><span class="s2">a</span><span class="dl">"</span>
+  <span class="nx">bar</span><span class="o">=</span><span class="dl">"</span><span class="s2">b</span><span class="dl">"</span>
+  <span class="nx">baz</span><span class="o">=</span><span class="dl">"</span><span class="s2">c</span><span class="dl">"</span>
+  <span class="o">/&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="表达式中的计算">表达式中的计算</h3>
+
+<p>1.尽量避免在v-model中进行大量计算,可以对该属性进行watch
+2.将引用类型的监听改为对该引用类型的子简单类型的单一监听</p>
+
+<h3 id="状态管理">状态管理</h3>
+<p>推荐使用vuex进行全局状态管理而不是window.status进行管理
+注:vuex刷新会消失。</p>
+:ET

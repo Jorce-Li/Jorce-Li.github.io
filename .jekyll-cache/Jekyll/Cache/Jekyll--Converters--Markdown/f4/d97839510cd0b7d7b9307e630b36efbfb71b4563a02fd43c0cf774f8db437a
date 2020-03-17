@@ -1,0 +1,119 @@
+I"-$<p>Update: 风格规范</p>
+
+<hr />
+
+<h1 id="react">React</h1>
+
+<h3 id="解构取值">解构取值</h3>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre>  <span class="kd">const</span> <span class="p">{</span><span class="nx">prop1</span><span class="p">,</span><span class="nx">prop2</span><span class="p">,</span><span class="nx">pro3</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span>
+  <span class="kd">let</span> <span class="p">{</span><span class="nx">state1</span><span class="p">,</span><span class="nx">state2</span><span class="p">,</span><span class="nx">state3</span><span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">state</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<h3 id="简单组件的构建">简单组件的构建</h3>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="kd">class</span> <span class="nx">Dog</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">let</span> <span class="p">{</span> <span class="nx">breed</span><span class="p">,</span> <span class="nx">color</span><span class="p">,</span> <span class="nx">goodOrBad</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span><span class="p">;</span>
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="p">{</span><span class="nx">breed</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">My</span> <span class="p">{</span><span class="nx">color</span><span class="p">}</span> <span class="nx">dog</span> <span class="nx">is</span> <span class="p">{</span><span class="nx">goodOrBad</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">;
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">// 对比</span>
+<span class="kd">let</span> <span class="nx">Dog</span> <span class="o">=</span> <span class="p">(</span><span class="nx">breed</span><span class="p">,</span> <span class="nx">color</span><span class="p">,</span> <span class="nx">goodOrBad</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="nx">className</span><span class="o">=</span><span class="p">{</span><span class="nx">breed</span><span class="p">}</span><span class="o">&gt;</span><span class="nx">My</span> <span class="p">{</span><span class="nx">color</span><span class="p">}</span> <span class="nx">dog</span> <span class="nx">is</span> <span class="p">{</span><span class="nx">goodOrBad</span><span class="p">}</span><span class="o">&lt;</span><span class="sr">/div&gt;</span><span class="err">;
+</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>同时对一个组件中属性的传递可以更改为…扩展运算符的传递 注意:当该组件需要动态render的时候不推荐…</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="kd">let</span> <span class="nx">propertiesList</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">className</span><span class="p">:</span> <span class="dl">"</span><span class="s2">my-favorite-component</span><span class="dl">"</span><span class="p">,</span>
+  <span class="na">id</span><span class="p">:</span> <span class="dl">"</span><span class="s2">myFav</span><span class="dl">"</span><span class="p">,</span>
+  <span class="na">content</span><span class="p">:</span> <span class="dl">"</span><span class="s2">Hello world!</span><span class="dl">"</span>
+<span class="p">};</span>
+<span class="kd">let</span> <span class="nx">SimpleDiv</span> <span class="o">=</span> <span class="nx">props</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">div</span> <span class="p">{...</span> <span class="nx">props</span><span class="p">}</span> <span class="sr">/&gt;</span><span class="err">;
+</span>
+<span class="kd">let</span> <span class="nx">jsxVersion</span> <span class="o">=</span> <span class="o">&lt;</span><span class="nx">SimpleDiv</span> <span class="nx">props</span><span class="o">=</span><span class="p">{</span><span class="nx">propertiesList</span><span class="p">}</span> <span class="sr">/&gt;</span><span class="err">;
+</span></pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="render尽量避免少的判断">render尽量避免少的判断</h3>
+<p>推荐下列的判断写法</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+</pre></td><td class="rouge-code"><pre><span class="kd">class</span> <span class="nx">SearchResult</span> <span class="kd">extends</span> <span class="nx">Component</span> <span class="p">{</span>
+  <span class="nx">render</span> <span class="p">()</span> <span class="p">{</span>
+    <span class="kd">const</span> <span class="p">{</span> <span class="nx">results</span> <span class="p">}</span> <span class="o">=</span> <span class="k">this</span><span class="p">.</span><span class="nx">props</span>
+
+    <span class="kd">const</span> <span class="nx">Results</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">Fragment</span><span class="o">&gt;</span>
+      <span class="p">{</span><span class="nx">results</span><span class="p">.</span><span class="nx">map</span><span class="p">(</span><span class="nx">index</span> <span class="o">=&gt;</span> <span class="o">&lt;</span><span class="nx">Result</span> <span class="nx">key</span><span class="o">=</span><span class="p">{</span><span class="nx">index</span><span class="p">}</span> <span class="p">{...</span><span class="nx">results</span><span class="p">[</span><span class="nx">index</span><span class="p">]}</span> <span class="sr">/&gt;</span><span class="se">)</span><span class="err">}
+</span>    <span class="o">&lt;</span><span class="sr">/Fragment</span><span class="err">&gt;
+</span>
+    <span class="kd">const</span> <span class="nx">NoResults</span> <span class="o">=</span> <span class="p">()</span> <span class="o">=&gt;</span> <span class="nx">No</span> <span class="nx">results</span>
+
+    <span class="k">return</span> <span class="o">&lt;</span><span class="nx">section</span> <span class="nx">className</span><span class="o">=</span><span class="dl">"</span><span class="s2">search-results</span><span class="dl">"</span><span class="o">&gt;</span>
+      <span class="p">{</span>
+        <span class="nx">results</span><span class="p">.</span><span class="nx">length</span>
+          <span class="p">?</span> <span class="nx">Results</span><span class="p">()</span>
+          <span class="p">:</span> <span class="nx">NoResults</span><span class="p">()</span>
+      <span class="p">}</span>
+    <span class="o">&lt;</span><span class="sr">/section</span><span class="err">&gt;
+</span>  <span class="p">}</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="css-js命名规范">css js命名规范</h3>
+<p>css需要加上scoped或者module
+css和js起名为了避免与引入引出的命名产生冲突,最好有特殊的前缀</p>
+
+<h3 id="组件起名规范">组件起名规范</h3>
+<ol>
+  <li>同Vue 组件属性最好分行写,增加易读性</li>
+</ol>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>  <span class="o">&lt;</span><span class="nx">MyComponent</span>
+    <span class="nx">foo</span><span class="o">=</span><span class="dl">"</span><span class="s2">a</span><span class="dl">"</span>
+    <span class="nx">bar</span><span class="o">=</span><span class="dl">"</span><span class="s2">b</span><span class="dl">"</span>
+    <span class="nx">baz</span><span class="o">=</span><span class="dl">"</span><span class="s2">c</span><span class="dl">"</span>
+  <span class="o">/&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h3 id="状态管理">状态管理</h3>
+<p>推荐使用redux进行全局状态管理而不是window.status进行管理
+注:redux刷新会消失。</p>
+:ET

@@ -1,0 +1,58 @@
+I"<p>Update: 还是在做聊天室的部分遇到的问题记录一下</p>
+
+<hr />
+
+<h1 id="本地前端起https服务">本地前端起https服务</h1>
+
+<h3 id="vue-cli-30">vue-cli 3.0</h3>
+
+<p>在vue.config.js文件的devServer中添加如下代码</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+</pre></td><td class="rouge-code"><pre><span class="nx">devServer</span><span class="p">:{</span>
+  <span class="nl">host</span><span class="p">:</span><span class="dl">'</span><span class="s1">192.168.1.xxx</span><span class="dl">'</span><span class="p">,</span><span class="c1">//局域网IP</span>
+  <span class="nx">https</span><span class="p">:{</span>
+    <span class="nl">key</span><span class="p">:</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./cert/192.168.1.xxx-key.pem</span><span class="dl">'</span><span class="p">)),</span><span class="c1">//</span>
+    <span class="nx">cert</span><span class="p">:</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="dl">'</span><span class="s1">./cert/192.168.1.xxx.pem</span><span class="dl">'</span><span class="p">))</span><span class="c1">//</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="c1">//The certificate is at ".pem" and the key at "-key.pem" </span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>然后再用serve启动即可。
+其中的key 和 cert 则需要使用mkcert或其他工具进行生成</p>
+
+<h4 id="mkcert"><a href="https://github.com/FiloSottile/mkcert">mkcert</a></h4>
+
+<p>使用choco进行安装 安装完成之后</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+</pre></td><td class="rouge-code"><pre><span class="nx">mkcert</span> <span class="o">-</span><span class="nx">install</span>
+<span class="nx">mkcert</span> <span class="mf">192.168</span><span class="p">.</span><span class="mi">1</span><span class="p">.</span><span class="nx">xxx</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>即可生成上述两个文件</p>
+
+<h1 id="本地node起https服务">本地Node起https服务</h1>
+
+<p>同上述步骤使用mkcert生成证书之后</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">privateKey</span>  <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="dl">'</span><span class="s1">./192.168.1.xxx-key.pem</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf8</span><span class="dl">'</span><span class="p">);</span>
+<span class="c1">// var certificate = fs.readFileSync('./file.crt', 'utf8');</span>
+<span class="kd">var</span> <span class="nx">certificate</span> <span class="o">=</span> <span class="nx">fs</span><span class="p">.</span><span class="nx">readFileSync</span><span class="p">(</span><span class="dl">'</span><span class="s1">./192.168.1.xxx.pem</span><span class="dl">'</span><span class="p">,</span> <span class="dl">'</span><span class="s1">utf8</span><span class="dl">'</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">credentials</span> <span class="o">=</span> <span class="p">{</span><span class="na">key</span><span class="p">:</span> <span class="nx">privateKey</span><span class="p">,</span> <span class="na">cert</span><span class="p">:</span> <span class="nx">certificate</span><span class="p">};</span>
+
+<span class="kd">const</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">https</span><span class="dl">'</span><span class="p">).</span><span class="nx">createServer</span><span class="p">(</span><span class="nx">credentials</span><span class="p">,</span><span class="nx">app</span><span class="p">);</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>启动即可</p>
+
+:ET

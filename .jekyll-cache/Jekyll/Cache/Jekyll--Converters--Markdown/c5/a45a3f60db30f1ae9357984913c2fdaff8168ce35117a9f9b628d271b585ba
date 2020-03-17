@@ -1,0 +1,118 @@
+I"�,<p>Update:判断是否是数组</p>
+
+<hr />
+
+<h2 id="tostring">toString</h2>
+
+<h3 id="objectprototypetostringcall">Object.prototype.toString.call()</h3>
+
+<p>每一个继承 Object 的对象都有 toString 方法，如果 toString 方法没有重写的话，会返回 [Object type]，其中 type 为对象的类型。但当除了 Object 类型的对象外，其他类型直接使用 toString 方法时，会直接返回都是内容的字符串，所以我们需要使用call或者apply方法来改变toString方法的执行上下文。</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">an</span> <span class="o">=</span> <span class="p">[</span><span class="dl">'</span><span class="s1">Hello</span><span class="dl">'</span><span class="p">,</span><span class="dl">'</span><span class="s1">An</span><span class="dl">'</span><span class="p">];</span>
+<span class="nx">an</span><span class="p">.</span><span class="nx">toString</span><span class="p">();</span> <span class="c1">// "Hello,An"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">an</span><span class="p">);</span> <span class="c1">// "[object Array]"</span>
+<span class="err">这种方法对于所有基本的数据类型都能进行判断，即使是</span> <span class="kc">null</span> <span class="err">和</span> <span class="kc">undefined</span> <span class="err">。</span>
+
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="dl">'</span><span class="s1">An</span><span class="dl">'</span><span class="p">)</span> <span class="c1">// "[object String]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">// "[object Number]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nb">Symbol</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span> <span class="c1">// "[object Symbol]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="kc">null</span><span class="p">)</span> <span class="c1">// "[object Null]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="kc">undefined</span><span class="p">)</span> <span class="c1">// "[object Undefined]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="kd">function</span><span class="p">(){})</span> <span class="c1">// "[object Function]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">({</span><span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">An</span><span class="dl">'</span><span class="p">})</span> <span class="c1">// "[object Object]"</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">()</span> <span class="err">常用于判断浏览器内置对象时。</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="instanceof">instanceof</h2>
+
+<p>instanceof的内部机制是通过判断对象的原型链中是不是能找到类型的 prototype。</p>
+
+<p>使用 instanceof判断一个对象是否为数组，instanceof 会判断这个对象的原型链上是否会找到对应的 Array 的原型，找到返回 true，否则返回 false。</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre><span class="p">[]</span>  <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">;</span> <span class="c1">// true</span>
+<span class="err">但</span> <span class="k">instanceof</span> <span class="err">只能用来判断对象类型，原始类型不可以。并且所有对象类型</span> <span class="k">instanceof</span> <span class="nb">Object</span> <span class="err">都是</span> <span class="kc">true</span><span class="err">。</span>
+<span class="p">[]</span>  <span class="k">instanceof</span> <span class="nb">Object</span><span class="p">;</span> <span class="c1">// true</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="arrayisarray">Array.isArray()</h2>
+
+<p>功能：用来判断对象是否为数组</p>
+
+<p>instanceof 与 isArray</p>
+
+<p>当检测Array实例时，Array.isArray 优于 instanceof ，因为 Array.isArray 可以检测出 iframes</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+</pre></td><td class="rouge-code"><pre><span class="kd">var</span> <span class="nx">iframe</span> <span class="o">=</span> <span class="nb">document</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="dl">'</span><span class="s1">iframe</span><span class="dl">'</span><span class="p">);</span>
+<span class="nb">document</span><span class="p">.</span><span class="nx">body</span><span class="p">.</span><span class="nx">appendChild</span><span class="p">(</span><span class="nx">iframe</span><span class="p">);</span>
+<span class="nx">xArray</span> <span class="o">=</span> <span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">[</span><span class="nb">window</span><span class="p">.</span><span class="nx">frames</span><span class="p">.</span><span class="nx">length</span><span class="o">-</span><span class="mi">1</span><span class="p">].</span><span class="nb">Array</span><span class="p">;</span>
+<span class="kd">var</span> <span class="nx">arr</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">xArray</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span> <span class="c1">// [1,2,3]</span>
+
+<span class="c1">// Correctly checking for Array</span>
+<span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span>  <span class="c1">// true</span>
+<span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arr</span><span class="p">);</span> <span class="c1">// true</span>
+<span class="c1">// Considered harmful, because doesn't work though iframes</span>
+<span class="nx">arr</span> <span class="k">instanceof</span> <span class="nb">Array</span><span class="p">;</span> <span class="c1">// false</span>
+<span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">()</span> <span class="err">与</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">()</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>Array.isArray()是ES5新增的方法，当不存在 Array.isArray() ，可以用</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">()</span> <span class="err">实现。</span>
+
+<span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">Object</span><span class="p">.</span><span class="nx">prototype</span><span class="p">.</span><span class="nx">toString</span><span class="p">.</span><span class="nx">call</span><span class="p">(</span><span class="nx">arg</span><span class="p">)</span> <span class="o">===</span> <span class="dl">'</span><span class="s1">[object Array]</span><span class="dl">'</span><span class="p">;</span>
+  <span class="p">};</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h2 id="constructor">constructor</h2>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+</pre></td><td class="rouge-code"><pre><span class="kd">let</span> <span class="nx">a</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="kd">let</span> <span class="nx">b</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="kd">let</span> <span class="nx">c</span> <span class="o">=</span> <span class="dl">""</span>
+<span class="nx">a</span><span class="p">.</span><span class="kd">constructor</span> <span class="o">===</span> <span class="nb">Array</span>
+<span class="nx">b</span><span class="p">.</span><span class="kd">constructor</span> <span class="o">===</span> <span class="nb">Object</span>
+<span class="nx">c</span><span class="p">.</span><span class="kd">constructor</span> <span class="o">===</span> <span class="nb">String</span>
+
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

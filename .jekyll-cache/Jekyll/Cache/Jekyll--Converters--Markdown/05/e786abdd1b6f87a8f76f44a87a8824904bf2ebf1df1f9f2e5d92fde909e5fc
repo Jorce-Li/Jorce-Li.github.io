@@ -1,0 +1,86 @@
+I"<p>Update:js中的盒子宽高</p>
+
+<hr />
+
+<h1 id="js">JS</h1>
+
+<h3 id="offsetwidth">offsetWidth</h3>
+
+<p>padding + width + border 只读</p>
+
+<h3 id="offsetheight">offsetHeight</h3>
+
+<p>padding + height + border 只读</p>
+
+<h3 id="clientwidth">clientWidth</h3>
+
+<p>padding + width 只读</p>
+
+<h3 id="clientheight">clientHeight</h3>
+
+<p>padding + height 只读</p>
+
+<h3 id="stylewidth">style.width</h3>
+
+<p>width + ‘px’ 可写 (必须在内联样式定义,外联css无效)</p>
+
+<h3 id="styleheight">style.height</h3>
+
+<p>height + ‘px’ 可写 (必须在内联样式定义,外联css无效)</p>
+
+<h3 id="scrollwidth">scrollWidth</h3>
+
+<p>width + padding + overWidth 可写</p>
+
+<h3 id="scrollheight">scrollHeight</h3>
+
+<p>width + padding + overHeight 可写</p>
+
+<h3 id="offsettop">offsetTop</h3>
+
+<p>顶部距离父元素的距离  只读</p>
+
+<h3 id="offsettop-1">offsetTop</h3>
+
+<p>左部距离父元素的距离 只读</p>
+
+<h3 id="scrollleft">scrollLeft</h3>
+
+<p>当前元素在容器内X的滚动距离 可写</p>
+
+<h3 id="scrollleft-1">scrollLeft</h3>
+
+<p>当前元素在容器内Y的滚动距离 可写</p>
+
+<h3 id="eclientx">e.clientX</h3>
+
+<p>鼠标相对于浏览器的X距离 不跟随滚动条</p>
+
+<h3 id="eclienty">e.clientY</h3>
+
+<p>鼠标相对于浏览器的X距离 不跟随滚动条</p>
+
+<h3 id="epagex">e.pageX</h3>
+
+<p>鼠标相对于浏览器的X距离 跟随滚动条</p>
+
+<h3 id="epagey">e.pageY</h3>
+
+<p>鼠标相对于浏览器的X距离 跟随滚动条</p>
+
+<h3 id="escreenx">e.screenX</h3>
+
+<p>鼠标相对于显示器的X距离</p>
+
+<h3 id="escreeny">e.screenY</h3>
+
+<p>鼠标相对于显示器的Y距离</p>
+
+<h3 id="eoffsetx">e.offsetX</h3>
+
+<p>鼠标相对于事件源的容器的X距离</p>
+
+<h3 id="eoffsety">e.offsetY</h3>
+
+<p>鼠标相对于事件源的容器的Y距离</p>
+:ET

@@ -1,0 +1,66 @@
+I"E<blockquote>
+  <p>本章介绍一下我用过的或者接触过的前端UI库</p>
+</blockquote>
+
+<h1 id="vue">Vue</h1>
+
+<h2 id="pc端">PC端</h2>
+
+<h3 id="element"><a href="http://element-cn.eleme.io/#/zh-CN">element</a></h3>
+
+<p>这个不必多说,用过Vue写后台的同学肯定都过用,本人也在工作中和自己的项目中大量使用了饿了么库,甚至还用它写过移动端,组件多,功能较完善并且一直在维护。
+github上有很多人用它写了后台管理系统
+例如比较出名的<a href="https://github.com/PanJiaChen/vue-element-admin">vue-element-admin</a></p>
+
+<h3 id="iview"><a href="https://www.iviewui.com/">iview</a></h3>
+
+<p>这个的话我是在尤大推荐的时候看了一下,在自己的项目中稍微用了一下包括风格样式和ele差不太多,但是组件上比ele要少一点。相比之下我还是选择维护团队大一点的ele。并且在github上看了也有人在做基于iview的后台管理系统,但是我down下来之后有不少报错。</p>
+
+<h3 id="vue-beauty"><a href="https://fe-driver.github.io/vue-beauty/#/components/start">vue-beauty</a></h3>
+
+<p>看ant的时候看到的vue借鉴的库,没用过,星星数也比较少,最近的更新也比较少。</p>
+
+<h2 id="移动端">移动端</h2>
+
+<h3 id="vue-material"><a href="https://vuematerial.io/">vue-material</a></h3>
+
+<p>看material的时候接触到的,因为公司官网用的是mui,发现效果还挺好的,特别是一些点击样式阴影设计都相比其他框架有优势,它的缺点在于对body等标签有修改会覆盖你可能已经写好的样式,这点需要注意一下。
+相比muse-ui的话,它的组件样式更完善,更趋于mui。</p>
+
+<h3 id="vant"><a href="https://youzan.github.io/vant/#/zh-CN/intro">Vant</a></h3>
+
+<p>有赞团队的前端库,样式什么的还行,但是文档写得是真的不敢恭维,定制化一般,许多组件没有option,公司在做移动端管理系统的时候用了一下,挺费劲的。</p>
+
+<h3 id="mint-ui"><a href="https://mint-ui.github.io/docs/#/zh-cn2">mint-ui</a></h3>
+
+<p>在第一家公司的时候他们做的商城APP用的库,最近已经不维护了,也是饿了么团队做的。其实功能挺全的,但是不维护了的话以后也就。</p>
+
+<h1 id="react">React</h1>
+
+<h2 id="pc端-1">PC端</h2>
+
+<h3 id="ant-design"><a href="https://mint-ui.github.io/docs/#/zh-cn2">Ant-design</a></h3>
+
+<p>大名鼎鼎的阿里团队的react库,组件很全,使用者也很多,写后台管理系统的话一般都用这个。</p>
+
+<h3 id="semantic-ui"><a href="https://react.semantic-ui.com/views/card/">semantic-ui</a></h3>
+
+<p>公司同事推荐的库,看了一下文档组件很齐全,样式也很简约。</p>
+
+<h2 id="移动端-1">移动端</h2>
+
+<h3 id="material-ui"><a href="https://react.semantic-ui.com/views/card/">material-ui</a></h3>
+
+<p>不多数,react第一个UI库,样式很好看,包括一些悬浮效果波纹涟漪都比一般的超级简约的库好看得多。</p>
+
+<h1 id="angular">Angular</h1>
+
+<h2 id="移动端-2">移动端</h2>
+
+<h3 id="ionic"><a href="https://react.semantic-ui.com/views/card/">ionic</a></h3>
+
+<p>ionic的话一开始接触是认识到他和react native一样用来构建APP的。直到上家公司使用了它的组件才知道它也是一个ui库,样式的话没什么特殊的都差不多。</p>
+
+<p>最近基本不怎么用angular了接触的不多。</p>
+
+:ET

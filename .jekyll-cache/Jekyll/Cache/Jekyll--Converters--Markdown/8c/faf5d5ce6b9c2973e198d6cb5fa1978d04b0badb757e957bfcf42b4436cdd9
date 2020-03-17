@@ -1,0 +1,79 @@
+I"�<p>Update:Nginx的反向代理</p>
+
+<hr />
+
+<p>注:这里只记录我在工作过程中代理产生的作用</p>
+
+<h1 id="正向代理">正向代理</h1>
+
+<p>理解:通过正向代理指定性的访问某一个网站,客户端和代理服务器为一体</p>
+
+<p>作用:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+</pre></td><td class="rouge-code"><pre>1.翻墙
+2.代理用户记录,对外隐藏用户信息
+3.缓存
+4.....
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h1 id="反向代理">反向代理</h1>
+
+<p>理解:通过反向代理访问多个跨域网站服务器,代理服务器和跨域网站服务器为一体</p>
+
+<p>作用:</p>
+
+<div class="highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+</pre></td><td class="rouge-code"><pre>1.安全
+2.代理多个服务器作负载均衡
+3.跨域
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<h1 id="图片理解">图片理解</h1>
+<p><img src="/img/proxy.png" alt="avatar" /></p>
+
+<h1 id="vue和nginx的反向代理">Vue和Nginx的反向代理</h1>
+
+<p>nginx在server中使用location属性进行代理</p>
+
+<div class="language-conf highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+</pre></td><td class="rouge-code"><pre>  <span class="n">location</span> / {
+      <span class="c"># root   html;
+</span>      <span class="c"># index  index.html index.htm;
+</span>      <span class="n">proxy_pass</span> <span class="n">http</span>://<span class="m">127</span>.<span class="m">0</span>.<span class="m">0</span>.<span class="m">1</span>:<span class="m">3000</span>;
+  }
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<p>vue-cli在devServer中使用proxy属性进行代理</p>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+</pre></td><td class="rouge-code"><pre>  <span class="nx">proxy</span><span class="p">:</span> <span class="p">{</span>
+      <span class="dl">'</span><span class="s1">/v2</span><span class="dl">'</span><span class="p">:</span> <span class="p">{</span>
+          <span class="nl">target</span><span class="p">:</span> <span class="dl">'</span><span class="s1">http://localhost:8080/</span><span class="dl">'</span><span class="p">,</span>
+          <span class="c1">// target: 'http://localhost:8888/',</span>
+          <span class="nx">changeOrigin</span><span class="p">:</span> <span class="kc">true</span><span class="p">,</span>
+          <span class="nx">pathRewrite</span><span class="p">:</span> <span class="p">{</span>
+              <span class="dl">'</span><span class="s1">^/v2</span><span class="dl">'</span><span class="p">:</span> <span class="dl">''</span>
+          <span class="p">}</span>
+      <span class="p">}</span>
+  <span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+:ET

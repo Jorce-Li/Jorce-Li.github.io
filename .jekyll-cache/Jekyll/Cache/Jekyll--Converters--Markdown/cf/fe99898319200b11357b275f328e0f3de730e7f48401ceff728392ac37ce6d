@@ -1,0 +1,175 @@
+I"�#<p>Update: 瀑布流布局</p>
+
+<hr />
+
+<p>瀑布流的思路有很多,今天公司的同事遇到了移动端的这个问题就一起看了一下。
+以我之前看过的都是</p>
+
+<h4 id="1横向布局换行之后谁短往谁那推下一张图">1、横向布局换行之后谁短往谁那推下一张图</h4>
+<p>瀑布流布局要求要进行布置的元素等宽，然后计算元素的宽度与浏览器宽度之比，得到需要布置的列数。
+创建一个数组，长度为列数，里面的值为已布置元素的总高度（最开始为0）
+然后将未布置的元素依次布置到高度最小的那一列，就得到了瀑布流布局。
+其他种种基本类似</p>
+<h4 id="2flex布局">2、flex布局</h4>
+<p>使用flex-direction：column纵向排列的属性 + flex-wrap:wrap超过高度换行的属性来实现。
+这个问题点在于必须要设置最大高度 否则会一直往下排不换列</p>
+<h4 id="3columnbreak-inside">3、column+break-inside</h4>
+<p>今天主要用的是这个布局方法
+这种布局的问题在于竖列布局,当从后端取新数据的时候,第一行右侧的数据就会变化而不是直接布在了最后。
+先上代码</p>
+
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"waterfall"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试测试测试测试测试测
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试
+    <span class="nt">&lt;/div&gt;</span>
+<span class="nt">&lt;/div&gt;</span> 
+</pre></td></tr></tbody></table></code></pre></div></div>
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+</pre></td><td class="rouge-code"><pre><span class="nc">.waterfall</span> <span class="p">{</span>
+    <span class="nl">column-count</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+    <span class="nl">column-gap</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">break-inside</span><span class="p">:</span> <span class="nb">avoid</span><span class="p">;</span>
+    <span class="nl">padding</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">20px</span><span class="p">;</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="m">#686868</span><span class="p">;</span>
+    <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#ccc</span><span class="p">;</span>
+    <span class="nl">margin</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>结果如图一
+<img src="/img/in-post/cutcolumn1.png" alt="auto-focus" /></p>
+
+<p>这这里发现图上所标注的位置两边的margin不同,这个问题就需要去看实现这个布局的css属性了</p>
+
+<p>column布局就是列布局,通俗的理解就是将一个div的内容直接划分为多少列,一般的布局呢都是横向排版而这个属性呢就是竖向排版,这个位置就是marin不同的原因所在？？？？
+这里有一个重点：右侧的div的margin是去了左侧最底下？并不是。这里又引出了一个经典的边距塌陷的问题。</p>
+
+<p>break-inside属性呢通俗的讲就是是否让div因为布局设置被切断,当不设置这个属性的时候呢,废话少说直接上图二
+<img src="/img/in-post/cutcolumn2.png" alt="auto-focus" />
+左侧底部被切断了切到了右边,理解了吧。
+当设置了这个属性之后呢 就像图一一样了
+但是如果不设置margin有什么好的解决办法呢？最简单的套个div上个padding不就结束了？
+OK上代码</p>
+<div class="language-html highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+</pre></td><td class="rouge-code"><pre><span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"waterfall"</span><span class="nt">&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-content"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-content"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-content"</span><span class="nt">&gt;</span>
+        测试测试测试
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item"</span><span class="nt">&gt;</span>
+      <span class="nt">&lt;div</span> <span class="na">class=</span><span class="s">"item-content"</span><span class="nt">&gt;</span>
+        测试测试测试测试测试测试
+      <span class="nt">&lt;/div&gt;</span>
+    <span class="nt">&lt;/div&gt;</span>
+  <span class="nt">&lt;/div&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+
+<div class="language-css highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+</pre></td><td class="rouge-code"><pre><span class="o">&lt;</span><span class="nt">style</span><span class="o">&gt;</span>
+  <span class="nc">.waterfall</span> <span class="p">{</span>
+    <span class="nl">column-count</span><span class="p">:</span> <span class="m">2</span><span class="p">;</span>
+    <span class="nl">column-gap</span><span class="p">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nc">.item</span> <span class="p">{</span>
+    <span class="nl">break-inside</span><span class="p">:</span> <span class="nb">avoid</span><span class="p">;</span>
+    <span class="nl">padding</span><span class="p">:</span> <span class="m">10px</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nc">.item-content</span> <span class="p">{</span>
+    <span class="c">/* padding: 10px; */</span>
+    <span class="nl">font-size</span><span class="p">:</span> <span class="m">20px</span><span class="p">;</span>
+    <span class="nl">color</span><span class="p">:</span> <span class="m">#686868</span><span class="p">;</span>
+    <span class="nl">border</span><span class="p">:</span> <span class="m">1px</span> <span class="nb">solid</span> <span class="m">#ccc</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="o">&lt;/</span><span class="nt">style</span><span class="o">&gt;</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>好了成功解决</p>
+:ET

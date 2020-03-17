@@ -1,0 +1,30 @@
+I"�<p>Update: 遇到个功能是要分类就想说在前端过滤，不要从查数据库的时候过滤了。</p>
+
+<hr />
+
+<p>发现有个find，测试一番之后发现</p>
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><table class="rouge-table"><tbody><tr><td class="rouge-gutter gl"><pre class="lineno">1
+2
+3
+4
+5
+6
+7
+8
+9
+</pre></td><td class="rouge-code"><pre><span class="kd">const</span> <span class="nx">list</span> <span class="o">=</span> <span class="p">[{</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">,</span><span class="na">index</span><span class="p">:</span><span class="mi">1</span><span class="p">},{</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">2</span><span class="dl">'</span><span class="p">},{</span><span class="dl">'</span><span class="s1">name</span><span class="dl">'</span><span class="p">:</span><span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">}]</span>
+<span class="kd">let</span> <span class="nx">list2</span> <span class="o">=</span> <span class="nx">list</span><span class="p">.</span><span class="nx">find</span><span class="p">(</span><span class="nx">i</span><span class="o">=&gt;</span><span class="nx">i</span><span class="p">.</span><span class="nx">name</span><span class="o">===</span><span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="kd">let</span> <span class="nx">list3</span> <span class="o">=</span> <span class="nx">list</span><span class="p">.</span><span class="nx">filter</span><span class="p">(</span><span class="nx">i</span><span class="o">=&gt;</span><span class="nx">i</span><span class="p">.</span><span class="nx">name</span><span class="o">===</span><span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">)</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">list</span><span class="p">);[{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">,</span> <span class="na">index</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">2</span><span class="dl">'</span> <span class="p">},</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span> <span class="p">}</span> <span class="p">]</span>
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">list2</span><span class="p">);{</span> <span class="nl">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">,</span> <span class="nx">index</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">list3</span><span class="p">);[{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span><span class="p">,</span> <span class="na">index</span><span class="p">:</span> <span class="mi">1</span> <span class="p">},</span> <span class="p">{</span> <span class="na">name</span><span class="p">:</span> <span class="dl">'</span><span class="s1">1</span><span class="dl">'</span> <span class="p">}</span> <span class="p">]</span>
+</pre></td></tr></tbody></table></code></pre></div></div>
+<p>find 和 filter 都是不改变原数组的方法</p>
+
+<p>但是find只查出第一个符合条件的结果像例子里是直接返回了一个对象而不是数组！</p>
+
+<p>，而filter返回全部结果仍然是数组。</p>
+:ET
